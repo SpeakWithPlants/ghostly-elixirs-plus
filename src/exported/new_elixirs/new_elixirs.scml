@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b5">
+    <folder id="0" name="new_elixirs_comp">
+        <file id="0" name="new_elixirs_comp/newelixir_shadowfighter.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="1" name="new_elixirs_comp/newelixir_sanityaura.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="2" name="new_elixirs_comp/newelixir_lightning.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="3" name="new_elixirs_comp/newelixir_lightaura.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="4" name="new_elixirs_comp/newelixir_insanitydamage.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="5" name="new_elixirs_comp/newelixir_cleanse.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+        <file id="6" name="new_elixirs_comp/newelixir_healthdamage.png" width="200" height="200" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <entity id="0" name="new_elixirs">
+        <animation id="0" name="healthdamage" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_healthdamage" folder="0" file="6" abs_x="-118" abs_y="213" abs_pivot_x="0" abs_pivot_y="1" abs_angle="360" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_healthdamage">
+                <key id="0" spin="0">
+                    <object folder="0" file="6" x="-118" y="213" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="shadowfighter" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_shadowfighter" folder="0" file="0" abs_x="-119.881841" abs_y="212.488806" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_shadowfighter">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-119.881841" y="212.488806" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="2" name="sanityaura" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_sanityaura" folder="0" file="1" abs_x="-112" abs_y="209" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_sanityaura">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-112" y="209" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="3" name="lightning" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_lightning" folder="0" file="2" abs_x="-117" abs_y="212" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_lightning">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-117" y="212" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="4" name="lightaura" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_lightaura" folder="0" file="3" abs_x="-119" abs_y="211" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_lightaura">
+                <key id="0" spin="0">
+                    <object folder="0" file="3" x="-119" y="211" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="5" name="insanitydamage" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_insanitydamage" folder="0" file="4" abs_x="-118" abs_y="214" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_insanitydamage">
+                <key id="0" spin="0">
+                    <object folder="0" file="4" x="-118" y="214" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="6" name="cleanse" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_cleanse" folder="0" file="5" abs_x="-119" abs_y="213" abs_pivot_x="0" abs_pivot_y="1" abs_angle="0" abs_scale_x="1.2" abs_scale_y="1.2" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_cleanse">
+                <key id="0" spin="0">
+                    <object folder="0" file="5" x="-119" y="213" angle="0" scale_x="1.2" scale_y="1.2"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

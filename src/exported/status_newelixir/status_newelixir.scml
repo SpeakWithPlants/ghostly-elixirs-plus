@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b5">
+    <folder id="0" name="newelixir_shadowfighter_buff">
+        <file id="0" name="newelixir_shadowfighter_buff/newelixir_shadowfighter_buff-0.png" width="32" height="32" pivot_x="0.587641" pivot_y="0.796137"/>
+    </folder>
+    <folder id="1" name="newelixir_sanityaura_buff">
+        <file id="0" name="newelixir_sanityaura_buff/newelixir_sanityaura_buff-0.png" width="32" height="32" pivot_x="0.46117" pivot_y="0.801194"/>
+    </folder>
+    <folder id="2" name="newelixir_lightning_buff">
+        <file id="0" name="newelixir_lightning_buff/newelixir_lightning_buff-0.png" width="32" height="32" pivot_x="0.474288" pivot_y="0.774957"/>
+    </folder>
+    <folder id="3" name="newelixir_lightaura_buff">
+        <file id="0" name="newelixir_lightaura_buff/newelixir_lightaura_buff-0.png" width="32" height="32" pivot_x="0.421816" pivot_y="0.774957"/>
+    </folder>
+    <folder id="4" name="newelixir_insanitydamage_buff">
+        <file id="0" name="newelixir_insanitydamage_buff/newelixir_insanitydamage_buff-0.png" width="32" height="32" pivot_x="0.539879" pivot_y="0.709366"/>
+    </folder>
+    <folder id="5" name="newelixir_healthdamage_buff">
+        <file id="0" name="newelixir_healthdamage_buff/newelixir_healthdamage_buff-0.png" width="32" height="32" pivot_x="0.446175" pivot_y="0.833542"/>
+    </folder>
+    <entity id="0" name="status_abigail">
+        <animation id="0" name="buff_idle" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="newelixir_shadowfighter_buff-0" folder="0" file="0" abs_x="-9.075927" abs_y="-5.871243" abs_pivot_x="0.587641" abs_pivot_y="0.796137" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" name="newelixir_sanityaura_buff-0" folder="1" file="0" abs_x="30.34186" abs_y="-11.556605" abs_pivot_x="0.46117" abs_pivot_y="0.801194" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="1" key="0" z_index="1"/>
+                    <object_ref id="2" name="newelixir_lightning_buff-0" folder="2" file="0" abs_x="29.34902" abs_y="27.877099" abs_pivot_x="0.474288" abs_pivot_y="0.774957" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="2" key="0" z_index="2"/>
+                    <object_ref id="3" name="newelixir_lightaura_buff-0" folder="3" file="0" abs_x="-20.268136" abs_y="31.326774" abs_pivot_x="0.421816" abs_pivot_y="0.774957" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="3" key="0" z_index="3"/>
+                    <object_ref id="4" name="newelixir_insanitydamage_buff-0" folder="4" file="0" abs_x="14.245835" abs_y="57.799292" abs_pivot_x="0.539879" abs_pivot_y="0.709366" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="4" key="0" z_index="4"/>
+                    <object_ref id="5" name="newelixir_healthdamage_buff-0" folder="5" file="0" abs_x="63.539302" abs_y="12.944466" abs_pivot_x="0.446175" abs_pivot_y="0.833542" abs_angle="0" abs_scale_x="0.9" abs_scale_y="0.9" abs_a="1" timeline="5" key="0" z_index="5"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="newelixir_shadowfighter_buff-0">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-9.075927" y="-5.871243" pivot_x="0.587641" pivot_y="0.796137" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="newelixir_sanityaura_buff-0">
+                <key id="0" spin="0">
+                    <object folder="1" file="0" x="30.34186" y="-11.556605" pivot_x="0.46117" pivot_y="0.801194" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+            <timeline id="2" name="newelixir_lightning_buff-0">
+                <key id="0" spin="0">
+                    <object folder="2" file="0" x="29.34902" y="27.877099" pivot_x="0.474288" pivot_y="0.774957" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+            <timeline id="3" name="newelixir_lightaura_buff-0">
+                <key id="0" spin="0">
+                    <object folder="3" file="0" x="-20.268136" y="31.326774" pivot_x="0.421816" pivot_y="0.774957" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+            <timeline id="4" name="newelixir_insanitydamage_buff-0">
+                <key id="0" spin="0">
+                    <object folder="4" file="0" x="14.245835" y="57.799292" pivot_x="0.539879" pivot_y="0.709366" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+            <timeline id="5" name="newelixir_healthdamage_buff-0">
+                <key id="0" spin="0">
+                    <object folder="5" file="0" x="63.539302" y="12.944466" pivot_x="0.446175" pivot_y="0.833542" angle="0" scale_x="0.9" scale_y="0.9"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

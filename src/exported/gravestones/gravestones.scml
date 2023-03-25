@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b5">
+    <folder id="0" name="gravestone01">
+        <file id="0" name="gravestone01/gravestone01-0.png" width="256" height="240" pivot_x="0.489549" pivot_y="0.0823979"/>
+        <file id="1" name="gravestone01/gravestone01-1.png" width="236" height="328" pivot_x="0.477222" pivot_y="0.0693613"/>
+        <file id="2" name="gravestone01/gravestone01-2.png" width="212" height="344" pivot_x="0.424526" pivot_y="0.0475305"/>
+        <file id="3" name="gravestone01/gravestone01-3.png" width="220" height="348" pivot_x="0.522839" pivot_y="0.0614239"/>
+        <file id="4" name="gravestone01/gravestone01-4.png" width="284" height="88" pivot_x="0.439435" pivot_y="0.330972"/>
+        <file id="5" name="gravestone01/gravestone01-5.png" width="452" height="128" pivot_x="0.51709" pivot_y="0.317973"/>
+    </folder>
+    <entity id="0" name="gravestone">
+        <animation id="0" name="dug_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="5" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.51709" abs_pivot_y="0.317973" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="5" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="5" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="grave1_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="0" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.489549" abs_pivot_y="0.082398" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="2" name="grave1_hit_90s" length="167">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="0" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.489549" abs_pivot_y="0.082398" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="67">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="100">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="-4.039878" angle="0" scale_x="1.122804" scale_y="0.879664"/>
+                </key>
+                <key id="2" time="67" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="0.530184" angle="0" scale_x="1.024686" scale_y="1.105062"/>
+                </key>
+                <key id="3" time="100" spin="0">
+                    <object folder="0" file="0" x="-0.699" y="2.50362" angle="0" scale_x="0.877509" scale_y="1.202393"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="3" name="grave2_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="1" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.477222" abs_pivot_y="0.069361" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="4" name="grave2_hit_90s" length="167">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="1" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.477222" abs_pivot_y="0.069361" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="67">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="100">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="-3.725437" angle="0" scale_x="1.161551" scale_y="0.908585"/>
+                </key>
+                <key id="2" time="67" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="-2.503976" angle="0" scale_x="1.128811" scale_y="0.96112"/>
+                </key>
+                <key id="3" time="100" spin="0">
+                    <object folder="0" file="1" x="-0.699" y="1.422148" angle="0" scale_x="0.845064" scale_y="1.129982"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="5" name="grave3_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="2" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.424526" abs_pivot_y="0.047531" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="6" name="grave3_hit_90s" length="167">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="2" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.424526" abs_pivot_y="0.047531" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="67">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="100">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="-3.077628" angle="0" scale_x="1.30188" scale_y="0.91231"/>
+                </key>
+                <key id="2" time="67" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="-2.534939" angle="0" scale_x="1.097255" scale_y="0.944516"/>
+                </key>
+                <key id="3" time="100" spin="0">
+                    <object folder="0" file="2" x="-0.699" y="0.178506" angle="0" scale_x="0.947196" scale_y="1.105546"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="7" name="grave4_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="3" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.522839" abs_pivot_y="0.061424" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="8" name="grave4_hit_90s" length="167">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="3" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.522839" abs_pivot_y="0.061424" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="67">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="100">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-3.432039" angle="0" scale_x="1.276344" scale_y="0.916252"/>
+                </key>
+                <key id="2" time="67" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-3.045122" angle="0" scale_x="1.222911" scale_y="0.933939"/>
+                </key>
+                <key id="3" time="100" spin="0">
+                    <object folder="0" file="3" x="-0.699" y="-0.181936" angle="0" scale_x="0.827506" scale_y="1.064824"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="9" name="gravedirt_90s" length="34">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="gravestone01" folder="0" file="4" abs_x="-0.699" abs_y="-1.6" abs_pivot_x="0.439435" abs_pivot_y="0.330972" abs_angle="0" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="34">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="gravestone01">
+                <key id="0" spin="0">
+                    <object folder="0" file="4" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+                <key id="1" time="34" spin="0">
+                    <object folder="0" file="4" x="-0.699" y="-1.6" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>
