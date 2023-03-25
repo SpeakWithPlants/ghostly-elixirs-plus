@@ -10,7 +10,7 @@ elixirs.newelixir_sanityaura =
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
-elixirs.newelixir_sanityaura.bufffn = function(_, _)
+elixirs.newelixir_sanityaura.bufffn = function(_)
     local inst = GLOBAL.CreateEntity()
 
     inst.entity:AddTransform()
@@ -37,7 +37,7 @@ elixirs.newelixir_lightaura =
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
-elixirs.newelixir_lightaura.bufffn = function(_, _)
+elixirs.newelixir_lightaura.bufffn = function(_)
     local inst = GLOBAL.CreateEntity()
 
     inst.entity:AddTransform()
@@ -188,11 +188,66 @@ end
 --[[ all elixirs ]]
 --------------------------------------------------------------------------
 elixirs.all_elixirs = {}
-elixirs.all_elixirs.itemfn = function()
-    -- TODO general inventory item prefab function
+elixirs.all_elixirs.itemfn = function(prefab, params)
+    local elixir = GLOBAL.CreateEntity()
+
+    elixir.entity:AddTransform()
+    elixir.entity:AddAnimState()
+    elixir.entity:AddNetwork()
+
+    GLOBAL.MakeInventoryPhysics(elixir)
+
+    elixir.AnimState:SetBank("new_elixirs")
+    elixir.AnimState:SetBuild("new_elixirs")
+    elixir.AnimState:PlayAnimation(string.gsub(prefab, "newelixir_", "", 1))
+
+    elixir:AddTag("ghostlyelixir")
+
+    GLOBAL.MakeInventoryFloatable(elixir)
+
+    elixir.entity:SetPristine()
+    if not GLOBAL.TheWorld.ismastersim then return elixir end
+
+    elixir.params = params
+
+    elixir:AddComponent("inspectable")
+    elixir:AddComponent("inventoryitem")
+    elixir.components.inventoryitem.imagename = prefab
+    elixir.components.inventoryitem.atlasname = "images/inventoryimages/"..prefab..".xml"
+    elixir:AddComponent("stackable")
+    elixir:AddComponent("ghostlyelixir")
+    elixir:AddComponent("fuel")
+    elixir.components.fuel.fuelvalue = TUNING.SMALL_FUEL
+
+    return elixir
 end
-elixirs.all_elixirs.bufffn = function()
-    -- TODO general buff prefab function
+elixirs.all_elixirs.bufffn = function(params)
+    local buff = GLOBAL.CreateEntity()
+
+    if not GLOBAL.TheWorld.ismastersim then
+        -- Not meant for client!
+        buff:DoTaskInTime(0, buff.Remove)
+        return buff
+    end
+
+    buff.entity:AddTransform()
+    buff.entity:Hide()
+    buff.persists = false
+
+    buff.params = params
+
+    buff:AddTag("CLASSIFIED")
+
+    buff:AddComponent("debuff") -- TODO replace buff attach, detach, extend, and ontimerdone functions
+    buff.components.debuff:SetAttachedFn(buff_OnAttached)
+    buff.components.debuff:SetDetachedFn(buff_OnDetached)
+    buff.components.debuff:SetExtendedFn(buff_OnExtended)
+    buff.components.debuff.keepondespawn = true
+    buff:AddComponent("timer")
+    buff.components.timer:StartTimer("decay", params.duration)
+    buff:ListenForEvent("timerdone", buff_OnTimerDone)
+
+    return buff
 end
 
 --------------------------------------------------------------------------
