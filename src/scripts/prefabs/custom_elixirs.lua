@@ -1,6 +1,6 @@
 local elixirs = require("scripts/libraries/custom_elixirs_params.lua")
 
-local prefabs = {}
+local all_prefabs = {}
 
 local general_params = elixirs.all_elixirs
 local nightmare_params = elixirs.all_nightmare_elixirs
@@ -26,7 +26,7 @@ local function create_newelixir(_, params)
     if general_params.postitemfn then
         elixir = general_params.postitemfn(elixir)
     end
-    table.insert(prefabs, elixir)
+    return elixir
 end
 
 local function create_newelixir_buff(_, params)
@@ -50,14 +50,25 @@ local function create_newelixir_buff(_, params)
     if general_params.postbufffn then
         buff = general_params.postbufffn(buff)
     end
-    table.insert(prefabs, buff)
+    return buff
 end
 
 for prefab, params in pairs(elixirs) do
     if string.startswith(prefab, "newelixir_") then
-        create_newelixir(prefab, params)
-        create_newelixir_buff(prefab, params)
+        local assets = {
+            Asset("ANIM", "anim/new_elixirs.zip"),
+            Asset("ANIM", "anim/abigail_buff_drip.zip"),
+        }
+        local prefabs = {
+            prefab .. "_buff",
+            params.applyfx,
+            params.dripfx,
+        }
+        local elixirfn = function() create_newelixir(prefab, params) end
+        local bufffn = function() create_newelixir_buff(prefab, params) end
+        table.insert(all_prefabs, GLOBAL.Prefab(prefab, elixirfn, assets, prefabs))
+        table.insert(all_prefabs, GLOBAL.Prefab(prefab .. "_buff", bufffn))
     end
 end
 
-return unpack(prefabs)
+return unpack(all_prefabs)
