@@ -370,9 +370,6 @@ elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
 end
 elixirs.newelixir_shadowfighter.ondetachfn = function(buff, abigail)
     abigail:RemoveTag("crazy")
-    if abigail.components.combat ~= nil then
-        abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
-    end
 end
 
 --------------------------------------------------------------------------
