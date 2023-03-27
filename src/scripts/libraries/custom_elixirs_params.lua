@@ -198,15 +198,15 @@ elixirs.newelixir_healthdamage.calcmultiplier_wendyvex = function(wendy)
         local health_percent = wendy.components.health:GetPercent()
         local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
         if health_percent <= tuning.LOW_HEALTH then
-            return tuning.WENDYVEX.BONUS_DAMAGE_MULT
+            return tuning.WENDY_VEX.BONUS_DAMAGE_MULT
         end
-        local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
+        local deltaY = tuning.WENDY_VEX.MIN_DAMAGE_MULT - tuning.WENDY_VEX.MAX_DAMAGE_MULT
         local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
         if deltaX == 0 then
-            return tuning.WENDYVEX.MAX_DAMAGE_MULT
+            return tuning.WENDY_VEX.MAX_DAMAGE_MULT
         end
         local m = deltaY / deltaX
-        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDYVEX.MIN_DAMAGE_MULT
+        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDY_VEX.MIN_DAMAGE_MULT
     end
     return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
 end
@@ -236,7 +236,9 @@ elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
             if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_healthdamage_buff" then
                 return elixirs.newelixir_healthdamage.calcmultiplier_wendyvex(self)
             end
-            return old_customdamagemultfn(self, target)
+            if old_customdamagemultfn ~= nil then
+                return old_customdamagemultfn(self, target)
+            end
         end
     end
 end
@@ -314,7 +316,9 @@ elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
             if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_insanitydamage_buff" then
                 return elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex(self)
             end
-            return old_customdamagemultfn(self, target)
+            if old_customdamagemultfn ~= nil then
+                return old_customdamagemultfn(self, target)
+            end
         end
     end
 end
@@ -327,7 +331,7 @@ elixirs.newelixir_insanitydamage.ontickfn = function(buff, abigail)
         end
     end
 end
-elixirs.newelixir_healthdamage.ondetachfn = function(buff, abigail)
+elixirs.newelixir_insanitydamage.ondetachfn = function(buff, abigail)
     if abigail.components.combat ~= nil then
         abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
@@ -345,20 +349,30 @@ elixirs.newelixir_shadowfighter =
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "thurible_smoke",
 }
--- TODO define dripfxfn, this might go in onattach?
-elixirs.newelixir_shadowfighter.postinit_vex = function(buff)
-    -- TODO define postinit vex function
-end
 elixirs.newelixir_shadowfighter.postinit_wendy = function(wendy)
-    -- TODO define custom vex damage for wendy
-    -- inst.components.combat.customdamagemultfn = CustomCombatDamage
+    if wendy.components.combat ~= nil then
+        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
+        wendy.components.combat.customdamagemultfn = function(self, target)
+            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
+            local active_elixir = abigail:GetDebuff("elixir_buff")
+            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_shadowfighter_buff" then
+                return TUNING.NEW_ELIXIRS.SHADOWFIGHTER.WENDY_VEX.DAMAGE_MULT
+            end
+            if old_customdamagemultfn ~= nil then
+                return old_customdamagemultfn(self, target)
+            end
+        end
+    end
 end
 elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
     -- allows abigail to attack shadow creatures
     abigail:AddTag("crazy")
 end
-elixirs.newelixir_shadowfighter.ondetachfn = function(_, abigail)
+elixirs.newelixir_shadowfighter.ondetachfn = function(buff, abigail)
     abigail:RemoveTag("crazy")
+    if abigail.components.combat ~= nil then
+        abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
+    end
 end
 
 --------------------------------------------------------------------------

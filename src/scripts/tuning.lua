@@ -39,6 +39,9 @@ TUNING.NEW_ELIXIRS = {
     },
 
     -- continued tuning options for new elixirs below
+    ALL_NIGHTMARE_ELIXIRS = {
+        SANITYAURA = -TUNING.SANITYAURA_LARGE
+    },
     SANITYAURA = {
         AURA = TUNING.SANITYAURA_MED
     },
@@ -54,15 +57,11 @@ TUNING.NEW_ELIXIRS = {
             MAX_DAMAGE_MULT = 1.5,
             BONUS_DAMAGE_MULT = 1.5,
         },
-        WENDYVEX = {
+        WENDY_VEX = {
             MIN_DAMAGE_MULT = 1.4,
             MAX_DAMAGE_MULT = 2.4,
             BONUS_DAMAGE_MULT = 2.8,
         },
-    },
-    CLEANSE = {
-        HEALTH_GAIN = 0.3,
-        SANITY_GAIN = TUNING.SANITY_LARGE
     },
     INSANITYDAMAGE = {
         HIGH_SANITY = 1.0,
@@ -72,17 +71,23 @@ TUNING.NEW_ELIXIRS = {
             MAX_DAMAGE_MULT = 1.5,
             BONUS_DAMAGE_MULT = 1.5,
         },
-        WENDY = {
+        WENDYVEX = {
             MIN_DAMAGE_MULT = 1.4,
             MAX_DAMAGE_MULT = 2.0,
             BONUS_DAMAGE_MULT = 2.5,
         },
     },
+    SHADOWFIGHTER = {
+        WENDY_VEX = {
+            DAMAGE_MULT = 2.0,
+        },
+    },
     LIGHTNING = {
         SMITE_CHANCE = 0.1
     },
-    ALL_NIGHTMARE_ELIXIRS = {
-        SANITYAURA = -TUNING.SANITYAURA_LARGE
+    CLEANSE = {
+        HEALTH_GAIN = 0.3,
+        SANITY_GAIN = TUNING.SANITY_LARGE
     },
 }
 
