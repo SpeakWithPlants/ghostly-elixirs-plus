@@ -1,30 +1,149 @@
 local elixirs = {}
 
+--[[
+ Usable Functions:
+ itemfn(prefab, params)                                      - creates the elixir item that wendy uses
+ bufffn(prefab, params)                                      - creates the invisible buff object attached to abigail
+ onattachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is added to abigail
+ ondetachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is removed from abigail
+ onextendfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is reapplied to abigail
+ ontimerdonefn(buff, data { timername })                     - executed immediately before the buff is removed from abigail due to expiration
+]]--
+
+--------------------------------------------------------------------------
+--[[ all elixirs ]]
+--------------------------------------------------------------------------
+elixirs.all_elixirs = {
+    duration = TUNING.TOTAL_DAY_TIME,
+    applyfx = "ghostlyelixir_slowregen_fx",
+    dripfx = "ghostlyelixir_slowregen_dripfx",
+}
+elixirs.all_elixirs.itemfn = function(prefab, params)
+    local elixir = GLOBAL.CreateEntity()
+
+    elixir.entity:AddTransform()
+    elixir.entity:AddAnimState()
+    elixir.entity:AddNetwork()
+
+    GLOBAL.MakeInventoryPhysics(elixir)
+
+    elixir.AnimState:SetBank("new_elixirs")
+    elixir.AnimState:SetBuild("new_elixirs")
+    elixir.AnimState:PlayAnimation(string.gsub(prefab, "newelixir_", "", 1))
+
+    elixir:AddTag("ghostlyelixir")
+
+    GLOBAL.MakeInventoryFloatable(elixir)
+
+    elixir.entity:SetPristine()
+    if not GLOBAL.TheWorld.ismastersim then return elixir end
+
+    elixir.params = params
+
+    elixir:AddComponent("inspectable")
+    elixir:AddComponent("inventoryitem")
+    elixir.components.inventoryitem.imagename = prefab
+    elixir.components.inventoryitem.atlasname = "images/inventoryimages/" .. prefab .. ".xml"
+    elixir:AddComponent("stackable")
+    elixir:AddComponent("ghostlyelixir")
+    elixir:AddComponent("fuel")
+    elixir.components.fuel.fuelvalue = TUNING.SMALL_FUEL
+
+    return elixir
+end
+elixirs.all_elixirs.bufffn = function(_, params)
+    local buff = GLOBAL.CreateEntity()
+
+    if not GLOBAL.TheWorld.ismastersim then
+        -- Not meant for client!
+        buff:DoTaskInTime(0, buff.Remove)
+        return buff
+    end
+
+    buff.entity:AddTransform()
+    buff.entity:Hide()
+    buff.persists = false
+
+    buff.params = params
+
+    buff:AddTag("CLASSIFIED")
+
+    buff:AddComponent("debuff")
+    buff.components.debuff:SetAttachedFn(params.onattachfn)
+    buff.components.debuff:SetDetachedFn(params.ondetachfn)
+    buff.components.debuff:SetExtendedFn(params.onextendfn)
+    buff.components.debuff.keepondespawn = true
+    buff:AddComponent("timer")
+    buff.components.timer:StartTimer("decay", params.duration)
+    if params.ontimerdonefn ~= nil then
+        buff:ListenForEvent("timerdone", params.ontimerdonefn)
+    end
+
+    return buff
+end
+
+--------------------------------------------------------------------------
+--[[ all nightmare elixirs ]]
+--------------------------------------------------------------------------
+elixirs.all_nightmare_elixirs = {
+    duration = TUNING.TOTAL_DAY_TIME / 2,
+}
+elixirs.all_nightmare_elixirs.donightmareburst = function(abigail, sanity, scale, range_end, range_start)
+    scale = (scale or 1.0) * 1.5
+    range_end = range_end or 10.0
+    range_start = range_start or 5.0
+    if range_start == range_end then
+        range_end = range_start + 1
+    end
+    local abigail_pos = abigail.Transform:GetWorldPosition()
+    local x, y, z = abigail_pos
+    local necessary_tags = { "player" }
+    local nearby_players = GLOBAL.TheSim:FindEntities(x, y, z, range_end, necessary_tags)
+    for _, p in ipairs(nearby_players) do
+        if p.components.sanity ~= nil then
+            local player_pos = p.Transform:GetWorldPosition()
+            local distance = (player_pos - abigail_pos):Length()
+            local distance_proportion = (distance - range_start) / (range_end - range_start)
+            local distance_multiplier = 1.0 - (math.max(0.0, math.min(1.0, distance_proportion)))
+            p.components.sanity:DoDelta(sanity * distance_multiplier)
+        end
+    end
+    local nightmare_burst = GLOBAL.SpawnPrefab("stalker_shield")
+    nightmare_burst.Transform:SetPosition(abigail:GetPosition():Get())
+    nightmare_burst.AnimState:SetScale(scale, scale, scale)
+    abigail.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
+end
+elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
+    if buff.target ~= nil and buff.target.prefab == "abigail" then
+        -- do small nightmare burst if a nightmare elixir reaches the end of its duration
+        elixirs.all_nightmare_elixirs.donightmareburst(buff.target, -TUNING.SANITY_LARGE, 1.2, 7.0, 3.0)
+    end
+end
+elixirs.all_nightmare_elixirs.postbufffn = function(buff)
+    if not GLOBAL.TheWorld.ismastersim then return buff end
+
+    buff:AddComponent("sanityaura")
+    buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
+
+    return buff
+end
+
 --------------------------------------------------------------------------
 --[[ newelixir_sanityaura ]]
 --------------------------------------------------------------------------
 elixirs.newelixir_sanityaura =
 {
     nightmare = false,
-    duration = TUNING.TOTAL_DAY_TIME,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
-elixirs.newelixir_sanityaura.bufffn = function(_)
-    local inst = GLOBAL.CreateEntity()
+elixirs.newelixir_sanityaura.postbufffn = function(buff)
+    if not GLOBAL.TheWorld.ismastersim then return buff end
 
-    inst.entity:AddTransform()
-    inst.entity:AddNetwork()
+    buff:AddComponent("sanityaura")
+    buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.SANITYAURA.AURA
 
-    inst.entity:SetPristine()
-    if not GLOBAL.TheWorld.ismastersim then return inst end
-
-    inst:AddComponent("sanityaura")
-    inst.components.sanityaura.aura = TUNING.NEW_ELIXIRS.SANITYAURA.AURA
-
-    return inst
-
-    --return post_init_buff_fn(inst, elixir_type, data) TODO use generalized buff prefab function
+    return buff
 end
 
 --------------------------------------------------------------------------
@@ -33,11 +152,10 @@ end
 elixirs.newelixir_lightaura =
 {
     nightmare = false,
-    duration = TUNING.TOTAL_DAY_TIME,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
-elixirs.newelixir_lightaura.bufffn = function(_)
+elixirs.newelixir_lightaura.bufffn = function(_, _)
     local inst = GLOBAL.CreateEntity()
 
     inst.entity:AddTransform()
@@ -53,13 +171,16 @@ elixirs.newelixir_lightaura.bufffn = function(_)
     inst.Light:SetColour(255 / 255, 160 / 255, 160 / 255)
 
     inst.entity:SetPristine()
-    if not GLOBAL.TheWorld.ismastersim then return inst end
-
-    inst:AddComponent("heater")
-    inst.components.heater.heat = TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
 
     return inst
-    --return post_init_buff_fn(inst, elixir_type, data) TODO use generalized buff prefab function
+end
+elixirs.newelixir_lightaura.postbufffn = function(buff)
+    if not GLOBAL.TheWorld.ismastersim then return buff end
+
+    buff:AddComponent("heater")
+    buff.components.heater.heat = TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
+
+    return buff
 end
 
 --------------------------------------------------------------------------
@@ -68,7 +189,6 @@ end
 elixirs.newelixir_healthdamage =
 {
     nightmare = false,
-    duration = TUNING.TOTAL_DAY_TIME,
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
@@ -80,7 +200,7 @@ elixirs.newelixir_healthdamage =
 elixirs.newelixir_cleanse =
 {
     nightmare = false,
-    duration = 0,
+    duration = 0.1,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
@@ -98,7 +218,6 @@ end
 elixirs.newelixir_insanitydamage =
 {
     nightmare = true,
-    duration = TUNING.TOTAL_DAY_TIME / 2,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "shadow_trap_debuff_fx",
 }
@@ -111,7 +230,6 @@ elixirs.newelixir_insanitydamage =
 elixirs.newelixir_shadowfighter =
 {
     nightmare = true,
-    duration = TUNING.TOTAL_DAY_TIME / 2,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "thurible_smoke",
 }
@@ -136,10 +254,10 @@ end
 elixirs.newelixir_lightning =
 {
     nightmare = true,
-    duration = TUNING.TOTAL_DAY_TIME / 2,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "electrichitsparks",
 }
+-- TODO define dripfxfn, this might go in onattach?
 elixirs.newelixir_lightning.smitefn = function(target)
     if math.random() < TUNING.NEW_ELIXIRS.LIGHTNING.SMITE_CHANCE then
         local x, y, z = target.Transform:GetWorldPosition()
@@ -183,99 +301,5 @@ elixirs.newelixir_lightning.ondetachfn = function(buff, abigail)
     end
     abigail:RemoveEventCallback("onareaattackother", elixirs.lightning.onareaattackotherfn)
 end
-
---------------------------------------------------------------------------
---[[ all elixirs ]]
---------------------------------------------------------------------------
-elixirs.all_elixirs = {}
-elixirs.all_elixirs.itemfn = function(prefab, params)
-    local elixir = GLOBAL.CreateEntity()
-
-    elixir.entity:AddTransform()
-    elixir.entity:AddAnimState()
-    elixir.entity:AddNetwork()
-
-    GLOBAL.MakeInventoryPhysics(elixir)
-
-    elixir.AnimState:SetBank("new_elixirs")
-    elixir.AnimState:SetBuild("new_elixirs")
-    elixir.AnimState:PlayAnimation(string.gsub(prefab, "newelixir_", "", 1))
-
-    elixir:AddTag("ghostlyelixir")
-
-    GLOBAL.MakeInventoryFloatable(elixir)
-
-    elixir.entity:SetPristine()
-    if not GLOBAL.TheWorld.ismastersim then return elixir end
-
-    elixir.params = params
-
-    elixir:AddComponent("inspectable")
-    elixir:AddComponent("inventoryitem")
-    elixir.components.inventoryitem.imagename = prefab
-    elixir.components.inventoryitem.atlasname = "images/inventoryimages/"..prefab..".xml"
-    elixir:AddComponent("stackable")
-    elixir:AddComponent("ghostlyelixir")
-    elixir:AddComponent("fuel")
-    elixir.components.fuel.fuelvalue = TUNING.SMALL_FUEL
-
-    return elixir
-end
-elixirs.all_elixirs.bufffn = function(params)
-    local buff = GLOBAL.CreateEntity()
-
-    if not GLOBAL.TheWorld.ismastersim then
-        -- Not meant for client!
-        buff:DoTaskInTime(0, buff.Remove)
-        return buff
-    end
-
-    buff.entity:AddTransform()
-    buff.entity:Hide()
-    buff.persists = false
-
-    buff.params = params
-
-    buff:AddTag("CLASSIFIED")
-
-    buff:AddComponent("debuff") -- TODO replace buff attach, detach, extend, and ontimerdone functions
-    buff.components.debuff:SetAttachedFn(buff_OnAttached)
-    buff.components.debuff:SetDetachedFn(buff_OnDetached)
-    buff.components.debuff:SetExtendedFn(buff_OnExtended)
-    buff.components.debuff.keepondespawn = true
-    buff:AddComponent("timer")
-    buff.components.timer:StartTimer("decay", params.duration)
-    buff:ListenForEvent("timerdone", buff_OnTimerDone)
-
-    return buff
-end
-
---------------------------------------------------------------------------
---[[ all nightmare elixirs ]]
---------------------------------------------------------------------------
-elixirs.all_nightmare_elixirs = {}
-elixirs.all_nightmare_elixirs.postbufffn = function(buff)
-    buff.entity:SetPristine()
-    if not GLOBAL.TheWorld.ismastersim then return buff end
-
-    buff:AddComponent("sanityaura")
-    buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
-
-    return buff
-end
-
--- this one is just for copy/pasting
---[[
-newelixir_unused = {
-    nightmare = false,
-    duration = TUNING.TOTAL_DAY_TIME,
-    fn = function(elixir_type, data) end,
-    onattachfn = function(buff, abigail) end,
-    ontick = function(buff, abigail) end,
-    ondetachfn = function(buff, abigail) end,
-    fx = "ghostlyelixir_slowregen_fx",
-    dripfx = "ghostlyelixir_slowregen_dripfx",
-},
-]]
 
 return elixirs
