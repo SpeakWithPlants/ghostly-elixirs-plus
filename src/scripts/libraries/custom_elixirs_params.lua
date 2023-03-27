@@ -368,7 +368,7 @@ elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
     -- allows abigail to attack shadow creatures
     abigail:AddTag("crazy")
 end
-elixirs.newelixir_shadowfighter.ondetachfn = function(buff, abigail)
+elixirs.newelixir_shadowfighter.ondetachfn = function(_, abigail)
     abigail:RemoveTag("crazy")
 end
 
