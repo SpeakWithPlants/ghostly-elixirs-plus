@@ -192,7 +192,47 @@ elixirs.newelixir_healthdamage =
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
--- TODO define damage function
+elixirs.newelixir_healthdamage.calcmultiplier_wendyvex = function(_, abigail)
+    if abigail._playerlink ~= nil then
+        local wendy = abigail._playerlink
+        if wendy.components.health ~= nil then
+            local health_percent = wendy.components.health:GetPercent()
+            local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
+            if health_percent <= tuning.LOW_HEALTH then
+                return tuning.WENDYVEX.BONUS_DAMAGE_MULT
+            end
+            local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
+            local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
+            if deltaX == 0 then
+                return tuning.WENDYVEX.MAX_DAMAGE_MULT
+            end
+            local m = deltaY / deltaX
+            return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDYVEX.MIN_DAMAGE_MULT
+        end
+    end
+    return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
+end
+elixirs.newelixir_healthdamage.calcmultiplier_abigail = function(_, abigail)
+    if abigail._playerlink ~= nil then
+        local wendy = abigail._playerlink
+        if wendy.components.health ~= nil then
+            local health_percent = wendy.components.health:GetPercent()
+            local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
+            if health_percent <= tuning.LOW_HEALTH then
+                return tuning.ABIGAIL.BONUS_DAMAGE_MULT
+            end
+            local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
+            local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
+            if deltaX == 0 then
+                return tuning.ABIGAIL.MAX_DAMAGE_MULT
+            end
+            local m = deltaY / deltaX
+            return m * (health_percent - tuning.HIGH_HEALTH) + tuning.ABIGAIL.MIN_DAMAGE_MULT
+        end
+    end
+    return 1
+end
+-- TODO implement damage function
 
 --------------------------------------------------------------------------
 --[[ newelixir_cleanse ]]
@@ -221,6 +261,46 @@ elixirs.newelixir_insanitydamage =
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "shadow_trap_debuff_fx",
 }
+elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex = function(_, abigail)
+    if abigail._playerlink ~= nil then
+        local wendy = abigail._playerlink
+        if wendy.components.sanity ~= nil then
+            local sanity_percent = wendy.components.sanity:GetPercent()
+            local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
+            if sanity_percent <= tuning.LOW_SANITY then
+                return tuning.WENDYVEX.BONUS_DAMAGE_MULT
+            end
+            local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
+            local deltaX = tuning.HIGH_SANITY - tuning.LOW_SANITY
+            if deltaX == 0 then
+                return tuning.WENDYVEX.MAX_DAMAGE_MULT
+            end
+            local m = deltaY / deltaX
+            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.WENDYVEX.MIN_DAMAGE_MULT
+        end
+    end
+    return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
+end
+elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(_, abigail)
+    if abigail._playerlink ~= nil then
+        local wendy = abigail._playerlink
+        if wendy.components.sanity ~= nil then
+            local sanity_percent = wendy.components.sanity:GetPercent()
+            local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
+            if sanity_percent <= tuning.LOW_SANITY then
+                return tuning.ABIGAIL.BONUS_DAMAGE_MULT
+            end
+            local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
+            local deltaX = tuning.HIGH_SANITY - tuning.LOW_SANITY
+            if deltaX == 0 then
+                return tuning.ABIGAIL.MAX_DAMAGE_MULT
+            end
+            local m = deltaY / deltaX
+            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.ABIGAIL.MIN_DAMAGE_MULT
+        end
+    end
+    return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
+end
 -- TODO define dripfxfn
 -- TODO define damage function
 

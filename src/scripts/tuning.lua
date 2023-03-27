@@ -54,7 +54,7 @@ TUNING.NEW_ELIXIRS = {
             MAX_DAMAGE_MULT = 1.5,
             BONUS_DAMAGE_MULT = 1.5,
         },
-        WENDY = {
+        WENDYVEX = {
             MIN_DAMAGE_MULT = 1.4,
             MAX_DAMAGE_MULT = 2.0,
             BONUS_DAMAGE_MULT = 2.5,
@@ -65,8 +65,8 @@ TUNING.NEW_ELIXIRS = {
         SANITY_GAIN = TUNING.SANITY_LARGE
     },
     INSANITYDAMAGE = {
-        HIGH_HEALTH = 1.0,
-        LOW_HEALTH = 0.2,
+        HIGH_SANITY = 1.0,
+        LOW_SANITY = 0.2,
         ABIGAIL = {
             MIN_DAMAGE_MULT = 1.0,
             MAX_DAMAGE_MULT = 1.5,
