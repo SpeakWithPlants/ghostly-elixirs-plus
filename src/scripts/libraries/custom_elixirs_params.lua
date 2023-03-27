@@ -82,6 +82,7 @@ elixirs.all_elixirs.bufffn = function(_, params)
 
     return buff
 end
+-- TODO define general dripfxfn
 
 --------------------------------------------------------------------------
 --[[ all nightmare elixirs ]]
@@ -193,7 +194,7 @@ elixirs.newelixir_healthdamage =
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
-elixirs.newelixir_healthdamage.calcmultiplier_wendyvex = function(wendy)
+elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex = function(wendy)
     if wendy.components.health ~= nil then
         local health_percent = wendy.components.health:GetPercent()
         local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
@@ -235,7 +236,7 @@ elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
             local active_elixir = abigail:GetDebuff("elixir_buff")
             local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_healthdamage_buff"
             if target:HasDebuff("abigail_vex_debuff") and has_elixir then
-                return elixirs.newelixir_healthdamage.calcmultiplier_wendyvex(self)
+                return elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex(self)
             end
             if old_customdamagemultfn ~= nil then
                 return old_customdamagemultfn(self, target)
@@ -268,7 +269,7 @@ elixirs.newelixir_insanitydamage =
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "shadow_trap_debuff_fx",
 }
-elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex = function(_, abigail)
+elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex = function(_, abigail)
     if abigail._playerlink ~= nil then
         local wendy = abigail._playerlink
         if wendy.components.sanity ~= nil then
@@ -316,7 +317,7 @@ elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
             local active_elixir = abigail:GetDebuff("elixir_buff")
             local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_insanitydamage_buff"
             if target:HasDebuff("abigail_vex_debuff") and has_elixir then
-                return elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex(self)
+                return elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex(self)
             end
             if old_customdamagemultfn ~= nil then
                 return old_customdamagemultfn(self, target)
@@ -339,7 +340,6 @@ elixirs.newelixir_insanitydamage.ondetachfn = function(buff, abigail)
     end
 end
 -- TODO define dripfxfn
--- TODO define damage function
 -- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
@@ -439,13 +439,25 @@ elixirs.newelixir_cleanse =
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
+elixirs.newelixir_cleanse.spawnghostflowers = function(abigail)
+    local loot_table = { 1.0, 0.5, 0.5 }
+    local ax, ay, az = abigail.Transform:GetWorldPosition()
+    for _, chance in ipairs(loot_table) do
+        if math.random() < chance then
+            local ghostflower = GLOBAL.SpawnPrefab("ghostflower")
+            local angle = math.random(0, GLOBAL.PI2)
+            ghostflower.Transform:SetPosition(ax + math.cos(angle), ay, az - math.sin(angle))
+            ghostflower:DelayedGrow()
+        end
+    end
+end
 elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
     local healing = abigail.components.health:GetMaxWithPenalty() * TUNING.NEW_ELIXIRS.CLEANSE.HEALTH_GAIN
     abigail.components.health:DoDelta(healing)
     if abigail._playerlink ~= nil then
         abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
     end
+    elixirs.newelixir_cleanse.spawnghostflowers(abigail)
 end
--- TODO spawn ghostflowers on cleanse
 
 return elixirs
