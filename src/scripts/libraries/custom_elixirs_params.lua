@@ -233,7 +233,8 @@ elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
         wendy.components.combat.customdamagemultfn = function(self, target)
             local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
             local active_elixir = abigail:GetDebuff("elixir_buff")
-            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_healthdamage_buff" then
+            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_healthdamage_buff"
+            if target:HasDebuff("abigail_vex_debuff") and has_elixir then
                 return elixirs.newelixir_healthdamage.calcmultiplier_wendyvex(self)
             end
             if old_customdamagemultfn ~= nil then
@@ -313,7 +314,8 @@ elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
         wendy.components.combat.customdamagemultfn = function(self, target)
             local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
             local active_elixir = abigail:GetDebuff("elixir_buff")
-            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_insanitydamage_buff" then
+            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_insanitydamage_buff"
+            if target:HasDebuff("abigail_vex_debuff") and has_elixir then
                 return elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex(self)
             end
             if old_customdamagemultfn ~= nil then
@@ -355,7 +357,8 @@ elixirs.newelixir_shadowfighter.postinit_wendy = function(wendy)
         wendy.components.combat.customdamagemultfn = function(self, target)
             local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
             local active_elixir = abigail:GetDebuff("elixir_buff")
-            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_shadowfighter_buff" then
+            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_shadowfighter_buff"
+            if target:HasTag("shadowcreature") and target:HasDebuff("abigail_vex_debuff") and has_elixir then
                 return TUNING.NEW_ELIXIRS.SHADOWFIGHTER.WENDY_VEX.DAMAGE_MULT
             end
             if old_customdamagemultfn ~= nil then
