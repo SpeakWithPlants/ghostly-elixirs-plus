@@ -192,65 +192,52 @@ elixirs.newelixir_healthdamage =
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
-elixirs.newelixir_healthdamage.calcmultiplier_wendyvex = function(_, abigail)
-    if abigail._playerlink ~= nil then
-        local wendy = abigail._playerlink
-        if wendy.components.health ~= nil then
-            local health_percent = wendy.components.health:GetPercent()
-            local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
-            if health_percent <= tuning.LOW_HEALTH then
-                return tuning.WENDYVEX.BONUS_DAMAGE_MULT
-            end
-            local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
-            local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
-            if deltaX == 0 then
-                return tuning.WENDYVEX.MAX_DAMAGE_MULT
-            end
-            local m = deltaY / deltaX
-            return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDYVEX.MIN_DAMAGE_MULT
+elixirs.newelixir_healthdamage.calcmultiplier_wendyvex = function(wendy)
+    if wendy.components.health ~= nil then
+        local health_percent = wendy.components.health:GetPercent()
+        local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
+        if health_percent <= tuning.LOW_HEALTH then
+            return tuning.WENDYVEX.BONUS_DAMAGE_MULT
         end
+        local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
+        local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
+        if deltaX == 0 then
+            return tuning.WENDYVEX.MAX_DAMAGE_MULT
+        end
+        local m = deltaY / deltaX
+        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDYVEX.MIN_DAMAGE_MULT
     end
     return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
 end
-elixirs.newelixir_healthdamage.calcmultiplier_abigail = function(_, abigail)
-    if abigail._playerlink ~= nil then
-        local wendy = abigail._playerlink
-        if wendy.components.health ~= nil then
-            local health_percent = wendy.components.health:GetPercent()
-            local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
-            if health_percent <= tuning.LOW_HEALTH then
-                return tuning.ABIGAIL.BONUS_DAMAGE_MULT
-            end
-            local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
-            local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
-            if deltaX == 0 then
-                return tuning.ABIGAIL.MAX_DAMAGE_MULT
-            end
-            local m = deltaY / deltaX
-            return m * (health_percent - tuning.HIGH_HEALTH) + tuning.ABIGAIL.MIN_DAMAGE_MULT
+elixirs.newelixir_healthdamage.calcmultiplier_abigail = function(wendy)
+    if wendy.components.health ~= nil then
+        local health_percent = wendy.components.health:GetPercent()
+        local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
+        if health_percent <= tuning.LOW_HEALTH then
+            return tuning.ABIGAIL.BONUS_DAMAGE_MULT
         end
+        local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
+        local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
+        if deltaX == 0 then
+            return tuning.ABIGAIL.MAX_DAMAGE_MULT
+        end
+        local m = deltaY / deltaX
+        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.ABIGAIL.MIN_DAMAGE_MULT
     end
     return 1
 end
--- TODO implement damage function
-
---------------------------------------------------------------------------
---[[ newelixir_cleanse ]]
---------------------------------------------------------------------------
-elixirs.newelixir_cleanse =
-{
-    nightmare = false,
-    duration = 0.1,
-    applyfx = "ghostlyelixir_slowregen_fx",
-    dripfx = "ghostlyelixir_slowregen_dripfx",
-}
-elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
-    local healing = abigail.components.health:GetMaxWithPenalty() * TUNING.NEW_ELIXIRS.CLEANSE.HEALTH_GAIN
-    abigail.components.health:DoDelta(healing)
-    if abigail._playerlink ~= nil then
-        abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
+elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
+    if wendy.components.combat ~= nil then
+        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
+        wendy.components.combat.customdamagemultfn = function(self, target)
+            if target:HasDebuff("abigail_vex_debuff") then
+                return elixirs.newelixir_healthdamage.calcmultiplier_wendyvex(self)
+            end
+            return old_customdamagemultfn(self, target)
+        end
     end
 end
+-- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
 --[[ newelixir_insanitydamage ]]
@@ -301,8 +288,20 @@ elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(_, abigail)
     end
     return 1
 end
+elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
+    if wendy.components.combat ~= nil then
+        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
+        wendy.components.combat.customdamagemultfn = function(self, target)
+            if target:HasDebuff("abigail_vex_debuff") then
+                return elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex(self)
+            end
+            return old_customdamagemultfn(self, target)
+        end
+    end
+end
 -- TODO define dripfxfn
 -- TODO define damage function
+-- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
 --[[ newelixir_shadowfighter ]]
@@ -382,5 +381,24 @@ elixirs.newelixir_lightning.ondetachfn = function(buff, abigail)
     end
     abigail:RemoveEventCallback("onareaattackother", elixirs.lightning.onareaattackotherfn)
 end
+
+--------------------------------------------------------------------------
+--[[ newelixir_cleanse ]]
+--------------------------------------------------------------------------
+elixirs.newelixir_cleanse =
+{
+    nightmare = false,
+    duration = 0.1,
+    applyfx = "ghostlyelixir_slowregen_fx",
+    dripfx = "ghostlyelixir_slowregen_dripfx",
+}
+elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
+    local healing = abigail.components.health:GetMaxWithPenalty() * TUNING.NEW_ELIXIRS.CLEANSE.HEALTH_GAIN
+    abigail.components.health:DoDelta(healing)
+    if abigail._playerlink ~= nil then
+        abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
+    end
+end
+-- TODO spawn ghostflowers on cleanse
 
 return elixirs

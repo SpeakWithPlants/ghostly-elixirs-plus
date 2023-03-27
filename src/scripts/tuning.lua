@@ -56,8 +56,8 @@ TUNING.NEW_ELIXIRS = {
         },
         WENDYVEX = {
             MIN_DAMAGE_MULT = 1.4,
-            MAX_DAMAGE_MULT = 2.0,
-            BONUS_DAMAGE_MULT = 2.5,
+            MAX_DAMAGE_MULT = 2.4,
+            BONUS_DAMAGE_MULT = 2.8,
         },
     },
     CLEANSE = {
