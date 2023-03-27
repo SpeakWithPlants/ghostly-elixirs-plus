@@ -36,6 +36,7 @@ local function SpewGhostFlowers(moondial)
                     if loot.Physics ~= nil then
                         loot.Physics:SetVel(2 * cosangle, 12, 2 * -sinangle)
                     end
+                    loot:DelayedGrow()
                     if math.fmod(k, 3) then
                         local fx = GLOBAL.SpawnPrefab("splash")
                         fx.Transform:SetPosition(pt:Get())
