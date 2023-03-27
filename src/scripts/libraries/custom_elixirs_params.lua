@@ -242,7 +242,8 @@ elixirs.newelixir_shadowfighter.postinit_wendy = function(wendy)
     -- inst.components.combat.customdamagemultfn = CustomCombatDamage
 end
 elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
-    abigail:AddTag("crazy") -- allows abigail to attack shadow creatures
+    -- allows abigail to attack shadow creatures
+    abigail:AddTag("crazy")
 end
 elixirs.newelixir_shadowfighter.ondetachfn = function(_, abigail)
     abigail:RemoveTag("crazy")
