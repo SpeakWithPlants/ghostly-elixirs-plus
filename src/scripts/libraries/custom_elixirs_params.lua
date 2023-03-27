@@ -299,7 +299,7 @@ elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(_, abigail)
             return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.ABIGAIL.MIN_DAMAGE_MULT
         end
     end
-    return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
+    return 1
 end
 -- TODO define dripfxfn
 -- TODO define damage function
