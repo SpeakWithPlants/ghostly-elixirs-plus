@@ -5,6 +5,7 @@ local elixirs = {}
  itemfn(prefab, params)                                      - creates the elixir item that wendy uses
  bufffn(prefab, params)                                      - creates the invisible buff object attached to abigail
  onattachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is added to abigail
+ ontickfn(buff, target)                                      - executed at the buff's tick rate until detached
  ondetachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is removed from abigail
  onextendfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is reapplied to abigail
  ontimerdonefn(buff, data { timername })                     - executed immediately before the buff is removed from abigail due to expiration
@@ -230,11 +231,27 @@ elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
     if wendy.components.combat ~= nil then
         local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
         wendy.components.combat.customdamagemultfn = function(self, target)
-            if target:HasDebuff("abigail_vex_debuff") then
+            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
+            local active_elixir = abigail:GetDebuff("elixir_buff")
+            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_healthdamage_buff" then
                 return elixirs.newelixir_healthdamage.calcmultiplier_wendyvex(self)
             end
             return old_customdamagemultfn(self, target)
         end
+    end
+end
+elixirs.newelixir_healthdamage.ontickfn = function(buff, abigail)
+    if abigail ~= nil and abigail.components.combat ~= nil then
+        if abigail._playerlink ~= nil then
+            local wendy = abigail._playerlink
+            local multiplier = elixirs.newelixir_healthdamage.calcmultiplier_abigail(wendy)
+            abigail.components.combat.externaldamagemultipliers:SetModifier(buff, multiplier)
+        end
+    end
+end
+elixirs.newelixir_healthdamage.ondetachfn = function(buff, abigail)
+    if abigail.components.combat ~= nil then
+        abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
 end
 -- TODO implement damage functions in postinit
@@ -292,11 +309,27 @@ elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
     if wendy.components.combat ~= nil then
         local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
         wendy.components.combat.customdamagemultfn = function(self, target)
-            if target:HasDebuff("abigail_vex_debuff") then
+            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
+            local active_elixir = abigail:GetDebuff("elixir_buff")
+            if target:HasDebuff("abigail_vex_debuff") and active_elixir == "newelixir_insanitydamage_buff" then
                 return elixirs.newelixir_insanitydamage.calcmultiplier_wendyvex(self)
             end
             return old_customdamagemultfn(self, target)
         end
+    end
+end
+elixirs.newelixir_insanitydamage.ontickfn = function(buff, abigail)
+    if abigail ~= nil and abigail.components.combat ~= nil then
+        if abigail._playerlink ~= nil then
+            local wendy = abigail._playerlink
+            local multiplier = elixirs.newelixir_insanitydamage.calcmultiplier_abigail(wendy)
+            abigail.components.combat.externaldamagemultipliers:SetModifier(buff, multiplier)
+        end
+    end
+end
+elixirs.newelixir_healthdamage.ondetachfn = function(buff, abigail)
+    if abigail.components.combat ~= nil then
+        abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
 end
 -- TODO define dripfxfn
