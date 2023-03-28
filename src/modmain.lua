@@ -16,18 +16,18 @@ Assets = {
 	Asset("ATLAS", "images/inventoryimages/newelixir_lightaura.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_healthdamage.tex"),
 	Asset("ATLAS", "images/inventoryimages/newelixir_healthdamage.xml"),
-	Asset("IMAGE", "images/inventoryimages/newelixir_cleanse.tex"),
-	Asset("ATLAS", "images/inventoryimages/newelixir_cleanse.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_insanitydamage.tex"),
 	Asset("ATLAS", "images/inventoryimages/newelixir_insanitydamage.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_shadowfighter.tex"),
 	Asset("ATLAS", "images/inventoryimages/newelixir_shadowfighter.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_lightning.tex"),
 	Asset("ATLAS", "images/inventoryimages/newelixir_lightning.xml"),
+	Asset("IMAGE", "images/inventoryimages/newelixir_cleanse.tex"),
+	Asset("ATLAS", "images/inventoryimages/newelixir_cleanse.xml"),
 }
 
 PrefabFiles = {
-	"new_elixirs",
+	"custom_elixirs",
 	"gravestone_placer",
 }
 
@@ -58,11 +58,7 @@ AddComponentAction("USEITEM", "inventoryitem", function(inst, doer, target, acti
 	end
 end)
 
-local function DoNightmareElixir(_, _, target)
-	target.AnimState:SetBuild("ghost_abigail_nightmare_build")
-end
-
-local function DoApplyElixir(inst, giver, target)
+local function DoApplyElixir(inst, _, target)
 	if target ~= nil and target.components.debuffable ~= nil then
 		local current_buff = target.components.debuffable:GetDebuff("elixir_buff")
 		if current_buff ~= nil then
@@ -77,7 +73,7 @@ local function DoApplyElixir(inst, giver, target)
 		end
 		target.components.debuffable:AddDebuff("elixir_buff", inst.buff_prefab)
 		if inst.potion_tunings.NIGHTMARE_ELIXIR then
-			DoNightmareElixir(inst, giver, target)
+			target.AnimState:SetBuild("ghost_abigail_nightmare_build")
 		end
 		return true
 	end

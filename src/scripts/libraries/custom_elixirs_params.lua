@@ -2,13 +2,16 @@ local elixirs = {}
 
 --[[
  Usable Functions:
- itemfn(prefab, params)                                      - creates the elixir item that wendy uses
- bufffn(prefab, params)                                      - creates the invisible buff object attached to abigail
- onattachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is added to abigail
- ontickfn(buff, target)                                      - executed at the buff's tick rate until detached
- ondetachfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is removed from abigail
- onextendfn(buff, target, followsymbol, followoffset, data)  - executed when the buff is reapplied to abigail
- ontimerdonefn(buff, data { timername })                     - executed immediately before the buff is removed from abigail due to expiration
+
+ itemfn(prefab, params)                                         - creates the elixir item that wendy uses
+ postitemfn(elixir)                                             - executed after the elixir entity has been created
+ bufffn(prefab, params)                                         - creates the invisible buff object attached to abigail
+ postbufffn(buff)                                               - executed after the buff entity has been created
+ onattachfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is added to abigail
+ ontickfn(buff, target)                                         - executed at the buff's tick rate until detached
+ ondetachfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is removed from abigail
+ onextendfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is reapplied to abigail
+ ontimerdonefn(buff, data { timername })                        - executed immediately before the buff is removed from abigail due to expiration
 ]]--
 
 --------------------------------------------------------------------------
@@ -16,6 +19,7 @@ local elixirs = {}
 --------------------------------------------------------------------------
 elixirs.all_elixirs = {
     duration = TUNING.TOTAL_DAY_TIME,
+    tickrate = 0.5,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
@@ -69,20 +73,54 @@ elixirs.all_elixirs.bufffn = function(_, params)
 
     buff:AddTag("CLASSIFIED")
 
+    return buff
+end
+elixirs.all_elixirs.dripfxfn = function(buff, abigail)
+    if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
+        local x, y, z = abigail.Transform:GetWorldPosition()
+        GLOBAL.SpawnPrefab(buff.params.dripfx).Transform:SetPosition(x, y, z)
+    end
+end
+elixirs.all_elixirs.driptaskfn = function(buff, abigail)
+    return buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+end
+elixirs.all_elixirs.onapplyfn = function(buff, abigail)
+    buff.entity:SetParent(abigail.entity)
+    buff.Transform:SetPosition(0, 0, 0)
+    abigail:SetNightmare(buff.params.nightmare)
+    if buff.params.onattachfn ~= nil then
+        buff.params.onattachfn(buff, abigail)
+    end
+    if buff.params.ontickfn ~= nil then
+        buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
+    end
+    if buff.params.dripfxfn ~= nil then
+        buff.driptask = buff.params.driptaskfn(buff, abigail)
+    end
+    buff:ListenForEvent("death", function()
+        buff.components.debuff:Stop()
+    end, abigail)
+    if buff.params.applyfx ~= nil and not abigail.inlimbo then
+        local applyfx = GLOBAL.SpawnPrefab(buff.params.applyfx)
+        applyfx.entity:SetParent(abigail.entity)
+    end
+end
+elixirs.all_elixirs.postbufffn = function(buff)
+    if not GLOBAL.TheWorld.ismastersim then return buff end
+
     buff:AddComponent("debuff")
-    buff.components.debuff:SetAttachedFn(params.onattachfn)
-    buff.components.debuff:SetDetachedFn(params.ondetachfn)
-    buff.components.debuff:SetExtendedFn(params.onextendfn)
+    buff.components.debuff:SetAttachedFn(elixirs.all_elixirs.onapplyfn)
+    buff.components.debuff:SetDetachedFn(buff.params.ondetachfn)
+    buff.components.debuff:SetExtendedFn(buff.params.onextendfn)
     buff.components.debuff.keepondespawn = true
     buff:AddComponent("timer")
-    buff.components.timer:StartTimer("decay", params.duration)
-    if params.ontimerdonefn ~= nil then
-        buff:ListenForEvent("timerdone", params.ontimerdonefn)
+    buff.components.timer:StartTimer("decay", buff.params.duration)
+    if buff.params.ontimerdonefn ~= nil then
+        buff:ListenForEvent("timerdone", buff.params.ontimerdonefn)
     end
 
     return buff
 end
--- TODO define general dripfxfn
 
 --------------------------------------------------------------------------
 --[[ all nightmare elixirs ]]
@@ -135,7 +173,6 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_sanityaura =
 {
-    nightmare = false,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
@@ -153,7 +190,6 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_lightaura =
 {
-    nightmare = false,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
@@ -190,7 +226,6 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_healthdamage =
 {
-    nightmare = false,
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
@@ -258,7 +293,6 @@ elixirs.newelixir_healthdamage.ondetachfn = function(buff, abigail)
         abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
 end
--- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
 --[[ newelixir_insanitydamage ]]
@@ -268,6 +302,7 @@ elixirs.newelixir_insanitydamage =
     nightmare = true,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "shadow_trap_debuff_fx",
+    -- TODO define dripfxfn and driptaskfn
 }
 elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex = function(_, abigail)
     if abigail._playerlink ~= nil then
@@ -339,7 +374,6 @@ elixirs.newelixir_insanitydamage.ondetachfn = function(buff, abigail)
         abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
 end
--- TODO define dripfxfn
 -- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
@@ -350,6 +384,7 @@ elixirs.newelixir_shadowfighter =
     nightmare = true,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "thurible_smoke",
+    -- TODO define dripfxfn and driptaskfn
 }
 elixirs.newelixir_shadowfighter.postinit_wendy = function(wendy)
     if wendy.components.combat ~= nil then
@@ -383,8 +418,8 @@ elixirs.newelixir_lightning =
     nightmare = true,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "electrichitsparks",
+    -- TODO define dripfxfn and driptaskfn
 }
--- TODO define dripfxfn, this might go in onattach?
 elixirs.newelixir_lightning.smitefn = function(target)
     if math.random() < TUNING.NEW_ELIXIRS.LIGHTNING.SMITE_CHANCE then
         local x, y, z = target.Transform:GetWorldPosition()
@@ -434,7 +469,6 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_cleanse =
 {
-    nightmare = false,
     duration = 0.1,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
@@ -454,7 +488,7 @@ end
 elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
     local healing = abigail.components.health:GetMaxWithPenalty() * TUNING.NEW_ELIXIRS.CLEANSE.HEALTH_GAIN
     abigail.components.health:DoDelta(healing)
-    if abigail._playerlink ~= nil then
+    if abigail._playerlink ~= nil and abigail._playerlink.components.sanity ~= nil then
         abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
     end
     elixirs.newelixir_cleanse.spawnghostflowers(abigail)

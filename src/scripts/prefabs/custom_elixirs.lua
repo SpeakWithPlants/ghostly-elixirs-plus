@@ -15,15 +15,8 @@ local function priority_select(property, params)
 end
 
 local function create_newelixir(prefab, params)
-    local elixir
-    -- item functions, which create the original entity (exactly one of these must run)
-    if params.itemfn then
-        elixir = params.itemfn(prefab, params)
-    elseif params.nightmare and nightmare_params.itemfn then
-        elixir = nightmare_params.itemfn(prefab, params)
-    else
-        elixir = general_params.itemfn(prefab, params) -- general_params.itemfn MUST be defined
-    end
+    -- general_params.itemfn MUST be defined
+    local elixir = params.itemfn(prefab, params)
     elixir.params = params
     -- post item functions, after original entity creation
     if params.postitemfn then
@@ -39,15 +32,8 @@ local function create_newelixir(prefab, params)
 end
 
 local function create_newelixir_buff(prefab, params)
-    local buff
-    -- buff functions, which create the original entity (exactly one of these must run)
-    if params.bufffn then
-        buff = params.bufffn(prefab, params)
-    elseif params.nightmare and nightmare_params.bufffn then
-        buff = nightmare_params.bufffn(prefab, params)
-    else
-        buff = general_params.bufffn(prefab, params) -- general_params.bufffn MUST be defined
-    end
+    -- general_params.bufffn MUST be defined
+    local buff = params.bufffn(prefab, params)
     buff.params = params
     -- post buff functions, after original entity creation
     if params.postbufffn then
@@ -68,16 +54,31 @@ for prefab, params in pairs(elixirs) do
             Asset("ANIM", "anim/new_elixirs.zip"),
             Asset("ANIM", "anim/abigail_buff_drip.zip"),
         }
-        for _, property in ipairs({ "applyfx", "dripfx", "duration" }) do
-            params[property] = priority_select(property, params)
+        -- define which properties overwrite their parent properties
+        local priority_properties = {
+            "duration",
+            "tickrate",
+            "applyfx",
+            "dripfx",
+            "dripfxfn",
+            "driptaskfn",
+            "onattachfn",
+            "ondetachfn",
+            "onextendfn",
+            "itemfn",
+            "bufffn"
+        }
+        local explicit_params = {}
+        for _, property in ipairs(priority_properties) do
+            explicit_params[property] = priority_select(property, params)
         end
         local prefabs = {
             prefab .. "_buff",
-            params.applyfx,
-            params.dripfx,
+            explicit_params.applyfx,
+            explicit_params.dripfx,
         }
-        local elixirfn = function() return create_newelixir(prefab, params) end
-        local bufffn = function() return create_newelixir_buff(prefab, params) end
+        local elixirfn = function() return create_newelixir(prefab, explicit_params) end
+        local bufffn = function() return create_newelixir_buff(prefab, explicit_params) end
         table.insert(all_prefabs, GLOBAL.Prefab(prefab, elixirfn, assets, prefabs))
         table.insert(all_prefabs, GLOBAL.Prefab(prefab .. "_buff", bufffn))
     end
