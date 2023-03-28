@@ -84,10 +84,10 @@ end
 elixirs.all_elixirs.driptaskfn = function(buff, abigail)
     return buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
 end
-elixirs.all_elixirs.onapplyfn = function(buff, abigail)
+elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     buff.entity:SetParent(abigail.entity)
     buff.Transform:SetPosition(0, 0, 0)
-    abigail:SetNightmare(buff.params.nightmare)
+    abigail:SetNightmareForm(buff.params.nightmare)
     if buff.params.onattachfn ~= nil then
         buff.params.onattachfn(buff, abigail)
     end
@@ -105,19 +105,54 @@ elixirs.all_elixirs.onapplyfn = function(buff, abigail)
         applyfx.entity:SetParent(abigail.entity)
     end
 end
+elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
+    if buff.params.ondetachfn ~= nil then
+        buff.params.ondetachfn(buff, abigail)
+    end
+    abigail:SetNightmareForm(false)
+    if buff.task ~= nil then
+        buff.task:Cancel()
+        buff.task = nil
+    end
+    if buff.driptask ~= nil then
+        buff.driptask:Cancel()
+        buff.driptask = nil
+    end
+    buff:Remove()
+end
+elixirs.all_elixirs.buffextendfn = function(buff, abigail)
+    if (buff.components.timer:GetTimeLeft("decay") or 0) < buff.params.duration then
+        buff.components.timer:StopTimer("decay")
+        buff.components.timer:StartTimer("decay", buff.params.duration)
+    end
+    if buff.task ~= nil then
+        buff.task:Cancel()
+        buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
+    end
+    if buff.params.applyfx ~= nil and not abigail.inlimbo then
+        local applyfx = GLOBAL.SpawnPrefab(buff.params.applyfx)
+        applyfx.entity:SetParent(abigail.entity)
+    end
+end
+elixirs.all_elixirs.bufftimerdonefn = function(buff, data)
+    if data.name == "decay" then
+        if buff.params.ontimerdonefn ~= nil then
+            buff.params.ontimerdonefn(buff)
+        end
+        buff.components.debuff:Stop()
+    end
+end
 elixirs.all_elixirs.postbufffn = function(buff)
     if not GLOBAL.TheWorld.ismastersim then return buff end
 
     buff:AddComponent("debuff")
-    buff.components.debuff:SetAttachedFn(elixirs.all_elixirs.onapplyfn)
-    buff.components.debuff:SetDetachedFn(buff.params.ondetachfn)
-    buff.components.debuff:SetExtendedFn(buff.params.onextendfn)
+    buff.components.debuff:SetAttachedFn(elixirs.all_elixirs.buffattachfn)
+    buff.components.debuff:SetDetachedFn(elixirs.all_elixirs.buffdetachfn)
+    buff.components.debuff:SetExtendedFn(elixirs.all_elixirs.buffextendfn)
     buff.components.debuff.keepondespawn = true
     buff:AddComponent("timer")
     buff.components.timer:StartTimer("decay", buff.params.duration)
-    if buff.params.ontimerdonefn ~= nil then
-        buff:ListenForEvent("timerdone", buff.params.ontimerdonefn)
-    end
+    buff:ListenForEvent("timerdone", elixirs.all_elixirs.bufftimerdonefn)
 
     return buff
 end
@@ -128,35 +163,10 @@ end
 elixirs.all_nightmare_elixirs = {
     duration = TUNING.TOTAL_DAY_TIME / 2,
 }
-elixirs.all_nightmare_elixirs.donightmareburst = function(abigail, sanity, scale, range_end, range_start)
-    scale = (scale or 1.0) * 1.5
-    range_end = range_end or 10.0
-    range_start = range_start or 5.0
-    if range_start == range_end then
-        range_end = range_start + 1
-    end
-    local abigail_pos = abigail.Transform:GetWorldPosition()
-    local x, y, z = abigail_pos
-    local necessary_tags = { "player" }
-    local nearby_players = GLOBAL.TheSim:FindEntities(x, y, z, range_end, necessary_tags)
-    for _, p in ipairs(nearby_players) do
-        if p.components.sanity ~= nil then
-            local player_pos = p.Transform:GetWorldPosition()
-            local distance = (player_pos - abigail_pos):Length()
-            local distance_proportion = (distance - range_start) / (range_end - range_start)
-            local distance_multiplier = 1.0 - (math.max(0.0, math.min(1.0, distance_proportion)))
-            p.components.sanity:DoDelta(sanity * distance_multiplier)
-        end
-    end
-    local nightmare_burst = GLOBAL.SpawnPrefab("stalker_shield")
-    nightmare_burst.Transform:SetPosition(abigail:GetPosition():Get())
-    nightmare_burst.AnimState:SetScale(scale, scale, scale)
-    abigail.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
-end
 elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     if buff.target ~= nil and buff.target.prefab == "abigail" then
         -- do small nightmare burst if a nightmare elixir reaches the end of its duration
-        elixirs.all_nightmare_elixirs.donightmareburst(buff.target, -TUNING.SANITY_LARGE, 1.2, 7.0, 3.0)
+        buff.target:DoNightmareBurst(-TUNING.SANITY_LARGE, 1.2, 7.0, 3.0)
     end
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)

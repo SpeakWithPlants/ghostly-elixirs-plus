@@ -1,12 +1,4 @@
-local function UpdateEyes(abigail)
-    if abigail.is_defensive then
-        abigail.AnimState:ClearOverrideSymbol("ghost_eyes")
-    else
-        abigail.AnimState:OverrideSymbol("ghost_eyes", abigail.AnimState:GetBuild(), "angry_ghost_eyes")
-    end
-end
-
-local function SetNightmare(abigail, enable)
+local function SetNightmareForm(abigail, enable)
     if enable then
         abigail.AnimState:SetBuild("ghost_abigail_nightmare_build")
         abigail.nightmare = true
@@ -14,7 +6,37 @@ local function SetNightmare(abigail, enable)
         abigail.AnimState:SetBuild("ghost_abigail_build")
         abigail.nightmare = false
     end
-    abigail:UpdateEyes()
+    if abigail.is_defensive then
+        abigail.AnimState:ClearOverrideSymbol("ghost_eyes")
+    else
+        abigail.AnimState:OverrideSymbol("ghost_eyes", abigail.AnimState:GetBuild(), "angry_ghost_eyes")
+    end
+end
+
+local function DoNightmareBurst(abigail, sanity, scale, range_end, range_start)
+    scale = scale or 1.0
+    range_end = range_end or 10.0
+    range_start = range_start or 5.0
+    if range_start == range_end then
+        range_end = range_start + 1
+    end
+    local abigail_pos = abigail.Transform:GetWorldPosition()
+    local x, y, z = abigail_pos
+    local necessary_tags = { "player" }
+    local nearby_players = GLOBAL.TheSim:FindEntities(x, y, z, range_end, necessary_tags)
+    for _, p in ipairs(nearby_players) do
+        if p.components.sanity ~= nil then
+            local player_pos = p.Transform:GetWorldPosition()
+            local distance = (player_pos - abigail_pos):Length()
+            local distance_proportion = (distance - range_start) / (range_end - range_start)
+            local distance_multiplier = 1.0 - (math.max(0.0, math.min(1.0, distance_proportion)))
+            p.components.sanity:DoDelta(sanity * distance_multiplier)
+        end
+    end
+    local nightmare_burst = GLOBAL.SpawnPrefab("stalker_shield")
+    nightmare_burst.Transform:SetPosition(abigail:GetPosition():Get())
+    nightmare_burst.AnimState:SetScale(scale, scale, scale)
+    abigail.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
 end
 
 AddPrefabPostInit("abigail", function(abigail)
@@ -23,8 +45,8 @@ AddPrefabPostInit("abigail", function(abigail)
 
     abigail.nightmare = (abigail.AnimState:GetBuild() == "ghost_abigail_nightmare_build")
 
-    abigail.UpdateEyes = UpdateEyes
-    abigail.SetNightmare = SetNightmare
+    abigail.SetNightmareForm = SetNightmareForm
+    abigail.DoNightmareBurst = DoNightmareBurst
 
     -- add wendy inspect dialogue for nightmare abigail
     local OldGetStatus = abigail.components.inspectable.getstatus
@@ -43,6 +65,10 @@ AddPrefabPostInit("abigail", function(abigail)
         self.AnimState:OverrideSymbol("ghost_eyes", current_build, "angry_ghost_eyes")
     end
 
-    -- TODO add damage resistance function against shadow creatures, damage resistance should be 100% when wendy is not crazy
-    -- TODO (or better yet, de-aggro all shadow creatures on abigail when wendy is not crazy)
+    -- huge nightmare burst on death while in nightmare form
+    abigail:ListenForEvent("death", function()
+        if abigail.nightmare then
+            abigail:DoNightmareBurst(-TUNING.SANITY_HUGE, 1.5)
+        end
+    end)
 end)

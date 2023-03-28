@@ -65,6 +65,7 @@ for prefab, params in pairs(elixirs) do
             "onattachfn",
             "ondetachfn",
             "onextendfn",
+            "ontimerdonefn",
             "itemfn",
             "bufffn"
         }
