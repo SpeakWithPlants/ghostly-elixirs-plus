@@ -58,6 +58,7 @@ AddComponentAction("USEITEM", "inventoryitem", function(inst, doer, target, acti
 	end
 end)
 
+-- TODO reorganize apply function
 local function DoApplyElixir(inst, _, target)
 	if target ~= nil and target.components.debuffable ~= nil then
 		local current_buff = target.components.debuffable:GetDebuff("elixir_buff")
@@ -72,9 +73,6 @@ local function DoApplyElixir(inst, _, target)
 			return false, "NO_ELIXIR"
 		end
 		target.components.debuffable:AddDebuff("elixir_buff", inst.buff_prefab)
-		if inst.potion_tunings.NIGHTMARE_ELIXIR then
-			target.AnimState:SetBuild("ghost_abigail_nightmare_build")
-		end
 		return true
 	end
 end

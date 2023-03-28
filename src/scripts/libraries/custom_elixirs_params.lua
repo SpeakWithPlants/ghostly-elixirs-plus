@@ -273,22 +273,6 @@ elixirs.newelixir_healthdamage.calcmultiplier_abigail = function(wendy)
     end
     return 1
 end
-elixirs.newelixir_healthdamage.postinit_wendy = function(wendy)
-    if wendy.components.combat ~= nil then
-        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
-        wendy.components.combat.customdamagemultfn = function(self, target)
-            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
-            local active_elixir = abigail:GetDebuff("elixir_buff")
-            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_healthdamage_buff"
-            if target:HasDebuff("abigail_vex_debuff") and has_elixir then
-                return elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex(self)
-            end
-            if old_customdamagemultfn ~= nil then
-                return old_customdamagemultfn(self, target)
-            end
-        end
-    end
-end
 elixirs.newelixir_healthdamage.ontickfn = function(buff, abigail)
     if abigail ~= nil and abigail.components.combat ~= nil then
         if abigail._playerlink ~= nil then
@@ -354,22 +338,6 @@ elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(_, abigail)
     end
     return 1
 end
-elixirs.newelixir_insanitydamage.postinit_wendy = function(wendy)
-    if wendy.components.combat ~= nil then
-        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
-        wendy.components.combat.customdamagemultfn = function(self, target)
-            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
-            local active_elixir = abigail:GetDebuff("elixir_buff")
-            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_insanitydamage_buff"
-            if target:HasDebuff("abigail_vex_debuff") and has_elixir then
-                return elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex(self)
-            end
-            if old_customdamagemultfn ~= nil then
-                return old_customdamagemultfn(self, target)
-            end
-        end
-    end
-end
 elixirs.newelixir_insanitydamage.ontickfn = function(buff, abigail)
     if abigail ~= nil and abigail.components.combat ~= nil then
         if abigail._playerlink ~= nil then
@@ -384,7 +352,6 @@ elixirs.newelixir_insanitydamage.ondetachfn = function(buff, abigail)
         abigail.components.combat.externaldamagemultipliers:RemoveModifier(buff)
     end
 end
--- TODO implement damage functions in postinit
 
 --------------------------------------------------------------------------
 --[[ newelixir_shadowfighter ]]
@@ -396,22 +363,6 @@ elixirs.newelixir_shadowfighter =
     dripfx = "thurible_smoke",
     -- TODO define dripfxfn and driptaskfn
 }
-elixirs.newelixir_shadowfighter.postinit_wendy = function(wendy)
-    if wendy.components.combat ~= nil then
-        local old_customdamagemultfn = wendy.components.combat.customdamagemultfn
-        wendy.components.combat.customdamagemultfn = function(self, target)
-            local abigail = self.components.ghostlybond ~= nil and self.components.ghostlybond.ghost
-            local active_elixir = abigail:GetDebuff("elixir_buff")
-            local has_elixir = active_elixir ~= nil and active_elixir.prefab == "newelixir_shadowfighter_buff"
-            if target:HasTag("shadowcreature") and target:HasDebuff("abigail_vex_debuff") and has_elixir then
-                return TUNING.NEW_ELIXIRS.SHADOWFIGHTER.WENDY_VEX.DAMAGE_MULT
-            end
-            if old_customdamagemultfn ~= nil then
-                return old_customdamagemultfn(self, target)
-            end
-        end
-    end
-end
 elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
     -- allows abigail to attack shadow creatures
     abigail:AddTag("crazy")
