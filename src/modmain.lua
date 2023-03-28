@@ -45,6 +45,7 @@ modimport "scripts/features/moon_dial_offerings.lua"
 modimport "scripts/features/reusable_graves.lua"
 modimport "scripts/features/updates_sisturn.lua"
 modimport "scripts/features/updates_abigail.lua"
+modimport "scripts/features/updates_wendy.lua"
 modimport "scripts/features/updates_elixirs.lua"
 
 -- allow trinkets to be used on the moon dial
