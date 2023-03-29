@@ -1,4 +1,4 @@
-local elixirs = require "scripts/libraries/custom_elixirs_params"
+local elixirs = require "libraries/custom_elixirs_params"
 
 local all_prefabs = {}
 
@@ -49,7 +49,8 @@ local function create_newelixir_buff(prefab, params)
 end
 
 for prefab, params in pairs(elixirs) do
-    if string.startswith(prefab, "newelixir_") then
+    -- check if prefab name starts with "newelixir_"
+    if string.sub(prefab, #"newelixir_") == "newelixir_" then
         local assets = {
             Asset("ANIM", "anim/new_elixirs.zip"),
             Asset("ANIM", "anim/abigail_buff_drip.zip"),

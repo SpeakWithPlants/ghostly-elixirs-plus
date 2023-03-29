@@ -1,4 +1,4 @@
-local elixirs = require("scripts/libraries/custom_elixirs_params.lua")
+local elixirs = require "libraries/custom_elixirs_params"
 
 local all_elixir_prefabs = {
     "ghostlyelixir_slowregen",
