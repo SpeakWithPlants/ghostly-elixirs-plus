@@ -229,9 +229,9 @@ elixirs.newelixir_lightaura.bufffn = function(_, _)
 
     inst:AddTag("FX")
 
-    inst.Light:SetIntensity(.5)
-    inst.Light:SetRadius(TUNING.NEW_ELIXIRS.LIGHTAURA.LIGHT_RADIUS)
-    inst.Light:SetFalloff(1)
+    inst.Light:SetIntensity(TUNING.NEW_ELIXIRS.LIGHTAURA.INTENSITY)
+    inst.Light:SetRadius(TUNING.NEW_ELIXIRS.LIGHTAURA.RADIUS)
+    inst.Light:SetFalloff(TUNING.NEW_ELIXIRS.LIGHTAURA.FALLOFF)
     inst.Light:Enable(true)
     inst.Light:SetColour(255 / 255, 160 / 255, 160 / 255)
 
