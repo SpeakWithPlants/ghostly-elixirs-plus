@@ -72,7 +72,7 @@ AddCharacterRecipe("newelixir_lightning", {
 })
 
 AddCharacterRecipe("gravestone", {
-    Ingredient("marble", 4),
+    Ingredient("rocks", 8),
     Ingredient("boneshard", 1),
     Ingredient("shovel", 1)
 }, TECH.NONE, {

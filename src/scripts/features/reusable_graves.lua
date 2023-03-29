@@ -127,7 +127,7 @@ AddPrefabPostInit("gravestone", function(gravestone)
     gravestone:AddComponent("lootdropper")
 
     gravestone:AddComponent("workable")
-    gravestone.components.workable:SetWorkAction(GLOBAL.ACTIONS.HAMMER)
+    gravestone.components.workable:SetWorkAction(GLOBAL.ACTIONS.MINE)
     gravestone.components.workable:SetWorkLeft(6)
     gravestone.components.workable:SetOnFinishCallback(OnDestroy)
     gravestone.components.workable:SetOnWorkCallback(OnHit)
