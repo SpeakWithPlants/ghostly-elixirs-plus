@@ -1,4 +1,4 @@
-local elixirs = require("scripts/libraries/custom_elixirs_params.lua")
+local elixirs = require "scripts/libraries/custom_elixirs_params"
 
 AddPrefabPostInit("wendy", function(wendy)
     if wendy.components.combat ~= nil then

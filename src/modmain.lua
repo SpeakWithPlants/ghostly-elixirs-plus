@@ -31,8 +31,8 @@ PrefabFiles = {
 	"gravestone_placer",
 }
 
-modimport "scripts/tuning.lua"
-modimport "scripts/constants.lua"
+modimport "scripts/tuning"
+modimport "scripts/constants"
 
 -- add tag to all trinket items
 for k = 1, GLOBAL.NUM_TRINKETS do
@@ -41,12 +41,12 @@ for k = 1, GLOBAL.NUM_TRINKETS do
 	end)
 end
 
-modimport "scripts/features/moon_dial_offerings.lua"
-modimport "scripts/features/reusable_graves.lua"
-modimport "scripts/features/updates_sisturn.lua"
-modimport "scripts/features/updates_abigail.lua"
-modimport "scripts/features/updates_wendy.lua"
-modimport "scripts/features/updates_elixirs.lua"
+modimport "scripts/features/moon_dial_offerings"
+modimport "scripts/features/reusable_graves"
+modimport "scripts/features/updates_sisturn"
+modimport "scripts/features/updates_abigail"
+modimport "scripts/features/updates_elixirs"
+modimport "scripts/features/updates_wendy"
 
 -- allow items to be offered to the moon dial
 -- allow trinkets to be buried in open mounds
@@ -72,7 +72,7 @@ AddClassPostConstruct("widgets/statusdisplays", function(inst)
 	end
 end)
 
-modimport "scripts/recipes.lua"
+modimport "scripts/recipes"
 
 -- TODO remove debug mode
 GLOBAL.CHEATS_ENABLED = true
