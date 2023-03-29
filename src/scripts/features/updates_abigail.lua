@@ -73,29 +73,29 @@ AddPrefabPostInit("abigail", function(abigail)
     end)
 end)
 
--- find a single child node by name
-local function GetNodeByName(parent, node_name)
-    for _, node in ipairs(parent.children) do
-        if node.name == node_name then
+local function FindNode(node, node_path, current_index)
+    local search_name = node_path[current_index]
+    if node.name == search_name then
+        if current_index == #node_path then
             return node
         end
+        for _, child in node.children do
+            local found = FindNode(child, node_path, current_index + 1)
+            if found then
+                return found
+            end
+        end
     end
+    return nil
 end
 
--- find a behavior tree node by path
 local function FindNodeAt(root, node_path)
-    if root ~= nil and node_path ~= nil then
-        local current_parent = root
-        for _, node_name in ipairs(node_path) do
-            current_parent = GetNodeByName(current_parent, node_name)
-        end
-        return current_parent
-    end
+    return FindNode(root, node_path, 1)
 end
 
 AddBrainPostInit("abigailbrain", function(brain)
     local root = brain.bt.root
-    local follow_node = FindNodeAt(root, { "DefensiveMove", "Priority", "Follow" })
+    local follow_node = FindNodeAt(root, { "Priority", "DefensiveMove", "Priority", "Follow" })
     local old_min_dist_fn = follow_node.min_dist_fn
     follow_node.min_dist_fn = function(abigail)
         return abigail.min_dist_override or (old_min_dist_fn and old_min_dist_fn() or TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW)
