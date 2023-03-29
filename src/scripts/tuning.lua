@@ -89,6 +89,16 @@ TUNING.NEW_ELIXIRS = {
         HEALTH_GAIN = 0.3,
         SANITY_GAIN = TUNING.SANITY_LARGE
     },
+
+    -- continued tuning options for existing elixirs below
+    SPEED = {
+        MIN_FOLLOW_DIST = 0.5,
+        MED_FOLLOW_DIST = 0.8,
+        MAX_FOLLOW_DIST = 1.0,
+    },
+    SLOWREGEN = {
+        BOND_TIME_MULT = 3,
+    },
 }
 
 -- TODO remove debug options

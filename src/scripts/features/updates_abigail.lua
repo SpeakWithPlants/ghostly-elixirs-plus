@@ -72,3 +72,40 @@ AddPrefabPostInit("abigail", function(abigail)
         end
     end)
 end)
+
+-- find a single child node by name
+local function GetNodeByName(parent, node_name)
+    for _, node in ipairs(parent.children) do
+        if node.name == node_name then
+            return node
+        end
+    end
+end
+
+-- find a behavior tree node by path
+local function FindNodeAt(root, node_path)
+    if root ~= nil and node_path ~= nil then
+        local current_parent = root
+        for _, node_name in ipairs(node_path) do
+            current_parent = GetNodeByName(current_parent, node_name)
+        end
+        return current_parent
+    end
+end
+
+AddBrainPostInit("abigailbrain", function(brain)
+    local root = brain.bt.root
+    local follow_node = FindNodeAt(root, { "DefensiveMove", "Priority", "Follow" })
+    local old_min_dist_fn = follow_node.min_dist_fn
+    follow_node.min_dist_fn = function(abigail)
+        return abigail.min_dist_override or (old_min_dist_fn and old_min_dist_fn() or TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW)
+    end
+    local old_target_dist_fn = follow_node.target_dist_fn
+    follow_node.target_dist_fn = function(abigail)
+        return abigail.med_dist_override or (old_target_dist_fn and old_target_dist_fn() or TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW)
+    end
+    local old_max_dist_fn = follow_node.max_dist_fn
+    follow_node.max_dist_fn = function(abigail)
+        return abigail.max_dist_override or (old_max_dist_fn and old_max_dist_fn() or TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW)
+    end
+end)

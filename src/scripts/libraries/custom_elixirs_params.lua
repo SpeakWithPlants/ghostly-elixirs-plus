@@ -23,6 +23,23 @@ elixirs.all_elixirs = {
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
+elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
+    if abigail ~= nil then
+        local current_buff = abigail:GetDebuff("elixir_buff")
+        if current_buff ~= nil then
+            if current_buff.params.nightmare and not elixir.params.nightmare and elixir.prefab ~= "newelixir_cleanse" then
+                return false, "WRONG_ELIXIR"
+            end
+            if current_buff.prefab ~= elixir.buff_prefab then
+                abigail:RemoveDebuff("elixir_buff")
+            end
+        elseif elixir.prefab == "newelixir_cleanse" then
+            return false, "NO_ELIXIR"
+        end
+        abigail:AddDebuff("elixir_buff", elixir.prefab .. "_buff")
+        return true
+    end
+end
 elixirs.all_elixirs.itemfn = function(prefab, params)
     local elixir = GLOBAL.CreateEntity()
 
@@ -453,6 +470,21 @@ elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
         abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
     end
     elixirs.newelixir_cleanse.spawnghostflowers(abigail)
+end
+
+--------------------------------------------------------------------------
+--[[ ghostlyelixir_speed ]]
+--------------------------------------------------------------------------
+elixirs.ghostlyelixir_speed = {}
+elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
+    abigail.min_dist_override = TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST
+    abigail.med_dist_override = TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST
+    abigail.max_dist_override = TUNING.NEW_ELIXIRS.SPEED.MAX_FOLLOW_DIST
+end
+elixirs.ghostlyelixir_speed.ondetachfn = function(_, abigail)
+    abigail.min_dist_override = nil
+    abigail.med_dist_override = nil
+    abigail.max_dist_override = nil
 end
 
 return elixirs
