@@ -322,15 +322,15 @@ elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex = function(_, abigail)
             local sanity_percent = wendy.components.sanity:GetPercent()
             local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
             if sanity_percent <= tuning.LOW_SANITY then
-                return tuning.WENDYVEX.BONUS_DAMAGE_MULT
+                return tuning.WENDY_VEX.BONUS_DAMAGE_MULT
             end
-            local deltaY = tuning.WENDYVEX.MIN_DAMAGE_MULT - tuning.WENDYVEX.MAX_DAMAGE_MULT
+            local deltaY = tuning.WENDY_VEX.MIN_DAMAGE_MULT - tuning.WENDY_VEX.MAX_DAMAGE_MULT
             local deltaX = tuning.HIGH_SANITY - tuning.LOW_SANITY
             if deltaX == 0 then
-                return tuning.WENDYVEX.MAX_DAMAGE_MULT
+                return tuning.WENDY_VEX.MAX_DAMAGE_MULT
             end
             local m = deltaY / deltaX
-            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.WENDYVEX.MIN_DAMAGE_MULT
+            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.WENDY_VEX.MIN_DAMAGE_MULT
         end
     end
     return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
