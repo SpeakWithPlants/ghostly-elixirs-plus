@@ -1,21 +1,6 @@
 local elixirs = require "libraries/custom_elixirs_params"
 
-local all_elixir_prefabs = {
-    "ghostlyelixir_slowregen",
-    "ghostlyelixir_fastregen",
-    "ghostlyelixir_speed",
-    "ghostlyelixir_attack",
-    "ghostlyelixir_shield",
-    "ghostlyelixir_retaliation",
-    "newelixir_sanityaura",
-    "newelixir_lightaura",
-    "newelixir_healthdamage",
-    "newelixir_insanitydamage",
-    "newelixir_shadowfighter",
-    "newelixir_lightning",
-    "newelixir_cleanse",
-}
-for _, elixir in ipairs(all_elixir_prefabs) do
+for _, elixir in ipairs(elixirs.all_elixir_prefabs) do
     AddPrefabPostInit(elixir, function(self)
         if self.components.ghostlyelixir ~= nil then
             self.components.ghostlyelixir.doapplyelixerfn = elixirs.all_elixirs.doapplyelixirfn

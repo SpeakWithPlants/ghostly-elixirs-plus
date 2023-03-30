@@ -40,7 +40,6 @@ local function DoNightmareBurst(abigail, sanity, scale, range_end, range_start)
 end
 
 AddPrefabPostInit("abigail", function(abigail)
-    abigail.entity:SetPristine()
     if not GLOBAL.TheWorld.ismastersim then return abigail end
 
     abigail.nightmare = (abigail.AnimState:GetBuild() == "ghost_abigail_nightmare_build")
@@ -73,29 +72,39 @@ AddPrefabPostInit("abigail", function(abigail)
     end)
 end)
 
-local function FindNode(node, node_path, current_index)
-    local search_name = node_path[current_index]
-    if node.name == search_name then
-        if current_index == #node_path then
-            return node
-        end
-        for _, child in node.children do
-            local found = FindNode(child, node_path, current_index + 1)
-            if found then
-                return found
+local function FindNodeAt(root, node_path)
+    local current_node = root
+    local current_index = 1
+    while current_index <= #node_path do
+        local search_name = node_path[current_index]
+        local found = false
+        for _, child in ipairs(current_node.children) do
+            if child.name == search_name then
+                current_node = child
+                found = true
+                break
             end
         end
+        if not found then
+            return nil
+        end
+        current_index = current_index + 1
     end
-    return nil
-end
-
-local function FindNodeAt(root, node_path)
-    return FindNode(root, node_path, 1)
+    return current_node
 end
 
 AddBrainPostInit("abigailbrain", function(brain)
-    local root = brain.bt.root
-    local follow_node = FindNodeAt(root, { "Priority", "DefensiveMove", "Priority", "Follow" })
+    local root = brain.bt.root -- priority
+    --local defensive_mode = root.children[1] -- while
+    --local defensive_priority = defensive_mode.children[#defensive_mode.children] -- priority
+    --local follow_node
+    --for _, node in ipairs(defensive_priority.children) do
+    --    if node.name == "Follow" then
+    --        follow_node = node
+    --        break
+    --    end
+    --end
+    local follow_node = FindNodeAt(root, { "Parallel", "Priority", "Follow" })
     local old_min_dist_fn = follow_node.min_dist_fn
     follow_node.min_dist_fn = function(abigail)
         return abigail.min_dist_override or (old_min_dist_fn and old_min_dist_fn() or TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW)

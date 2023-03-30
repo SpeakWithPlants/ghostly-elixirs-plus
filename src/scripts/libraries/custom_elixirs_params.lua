@@ -17,6 +17,30 @@ local elixirs = {}
 --------------------------------------------------------------------------
 --[[ all elixirs ]]
 --------------------------------------------------------------------------
+elixirs.all_elixir_prefabs = {
+    "ghostlyelixir_slowregen",
+    "ghostlyelixir_fastregen",
+    "ghostlyelixir_speed",
+    "ghostlyelixir_attack",
+    "ghostlyelixir_shield",
+    "ghostlyelixir_retaliation",
+    "newelixir_sanityaura",
+    "newelixir_lightaura",
+    "newelixir_healthdamage",
+    "newelixir_insanitydamage",
+    "newelixir_shadowfighter",
+    "newelixir_lightning",
+    "newelixir_cleanse",
+}
+elixirs.new_elixir_prefabs = {
+    "newelixir_sanityaura",
+    "newelixir_lightaura",
+    "newelixir_healthdamage",
+    "newelixir_insanitydamage",
+    "newelixir_shadowfighter",
+    "newelixir_lightning",
+    "newelixir_cleanse",
+}
 elixirs.all_elixirs = {
     duration = TUNING.TOTAL_DAY_TIME,
     tickrate = 0.5,
@@ -41,13 +65,13 @@ elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
     end
 end
 elixirs.all_elixirs.itemfn = function(prefab, params)
-    local elixir = GLOBAL.CreateEntity()
+    local elixir = CreateEntity()
 
     elixir.entity:AddTransform()
     elixir.entity:AddAnimState()
     elixir.entity:AddNetwork()
 
-    GLOBAL.MakeInventoryPhysics(elixir)
+    MakeInventoryPhysics(elixir)
 
     elixir.AnimState:SetBank("new_elixirs")
     elixir.AnimState:SetBuild("new_elixirs")
@@ -55,10 +79,10 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
 
     elixir:AddTag("ghostlyelixir")
 
-    GLOBAL.MakeInventoryFloatable(elixir)
+    MakeInventoryFloatable(elixir)
 
     elixir.entity:SetPristine()
-    if not GLOBAL.TheWorld.ismastersim then return elixir end
+    if not TheWorld.ismastersim then return elixir end
 
     elixir.params = params
 
@@ -74,9 +98,9 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
     return elixir
 end
 elixirs.all_elixirs.bufffn = function(_, params)
-    local buff = GLOBAL.CreateEntity()
+    local buff = CreateEntity()
 
-    if not GLOBAL.TheWorld.ismastersim then
+    if not TheWorld.ismastersim then
         -- Not meant for client!
         buff:DoTaskInTime(0, buff.Remove)
         return buff
@@ -95,7 +119,7 @@ end
 elixirs.all_elixirs.dripfxfn = function(buff, abigail)
     if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
         local x, y, z = abigail.Transform:GetWorldPosition()
-        GLOBAL.SpawnPrefab(buff.params.dripfx).Transform:SetPosition(x, y, z)
+        SpawnPrefab(buff.params.dripfx).Transform:SetPosition(x, y, z)
     end
 end
 elixirs.all_elixirs.driptaskfn = function(buff, abigail)
@@ -118,7 +142,7 @@ elixirs.all_elixirs.buffattachfn = function(buff, abigail)
         buff.components.debuff:Stop()
     end, abigail)
     if buff.params.applyfx ~= nil and not abigail.inlimbo then
-        local applyfx = GLOBAL.SpawnPrefab(buff.params.applyfx)
+        local applyfx = SpawnPrefab(buff.params.applyfx)
         applyfx.entity:SetParent(abigail.entity)
     end
 end
@@ -147,7 +171,7 @@ elixirs.all_elixirs.buffextendfn = function(buff, abigail)
         buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
     end
     if buff.params.applyfx ~= nil and not abigail.inlimbo then
-        local applyfx = GLOBAL.SpawnPrefab(buff.params.applyfx)
+        local applyfx = SpawnPrefab(buff.params.applyfx)
         applyfx.entity:SetParent(abigail.entity)
     end
 end
@@ -160,7 +184,7 @@ elixirs.all_elixirs.bufftimerdonefn = function(buff, data)
     end
 end
 elixirs.all_elixirs.postbufffn = function(buff)
-    if not GLOBAL.TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("debuff")
     buff.components.debuff:SetAttachedFn(elixirs.all_elixirs.buffattachfn)
@@ -187,7 +211,7 @@ elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     end
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)
-    if not GLOBAL.TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
@@ -204,7 +228,7 @@ elixirs.newelixir_sanityaura =
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
 elixirs.newelixir_sanityaura.postbufffn = function(buff)
-    if not GLOBAL.TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.SANITYAURA.AURA
@@ -221,7 +245,7 @@ elixirs.newelixir_lightaura =
     dripfx = "ghostlyelixir_attack_dripfx",
 }
 elixirs.newelixir_lightaura.bufffn = function(_, _)
-    local inst = GLOBAL.CreateEntity()
+    local inst = CreateEntity()
 
     inst.entity:AddTransform()
     inst.entity:AddLight()
@@ -240,7 +264,7 @@ elixirs.newelixir_lightaura.bufffn = function(_, _)
     return inst
 end
 elixirs.newelixir_lightaura.postbufffn = function(buff)
-    if not GLOBAL.TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("heater")
     buff.components.heater.heat = TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
@@ -405,7 +429,7 @@ elixirs.newelixir_lightning.smitefn = function(target)
             local necessarytags = { "_combat" }
             local ignoretags = target.components.aura.auraexcludetags or {}
             local radius = target.components.aura.radius or 4
-            local entities = GLOBAL.TheSim:FindEntities(x, y, z, radius, necessarytags, ignoretags)
+            local entities = TheSim:FindEntities(x, y, z, radius, necessarytags, ignoretags)
             local smitees = {}
             local found = false
             for i, entity in ipairs(entities) do
@@ -415,9 +439,9 @@ elixirs.newelixir_lightning.smitefn = function(target)
                 end
             end
             if not found then return end
-            local smitee = GLOBAL.GetRandomItem(smitees)
+            local smitee = GetRandomItem(smitees)
             if smitee ~= nil then
-                GLOBAL.TheWorld:PushEvent("ms_sendlightningstrike", smitee:GetPosition())
+                TheWorld:PushEvent("ms_sendlightningstrike", smitee:GetPosition())
             end
         end
     end
@@ -456,8 +480,8 @@ elixirs.newelixir_cleanse.spawnghostflowers = function(abigail)
     local ax, ay, az = abigail.Transform:GetWorldPosition()
     for _, chance in ipairs(loot_table) do
         if math.random() < chance then
-            local ghostflower = GLOBAL.SpawnPrefab("ghostflower")
-            local angle = math.random(0, GLOBAL.PI2)
+            local ghostflower = SpawnPrefab("ghostflower")
+            local angle = math.random(0, PI2)
             ghostflower.Transform:SetPosition(ax + math.cos(angle), ay, az - math.sin(angle))
             ghostflower:DelayedGrow()
         end

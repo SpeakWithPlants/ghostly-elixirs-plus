@@ -71,6 +71,7 @@ AddCharacterRecipe("newelixir_lightning", {
     image = "newelixir_lightning.tex",
 })
 
+-- make sure you manually update the loot drops for destroyed gravestones (features/reusable_graves.lua)
 AddCharacterRecipe("gravestone", {
     Ingredient("rocks", 8),
     Ingredient("boneshard", 1),

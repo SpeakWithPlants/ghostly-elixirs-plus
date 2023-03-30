@@ -48,42 +48,40 @@ local function create_newelixir_buff(prefab, params)
     return buff
 end
 
-for prefab, params in pairs(elixirs) do
-    -- check if prefab name starts with "newelixir_"
-    if string.sub(prefab, #"newelixir_") == "newelixir_" then
-        local assets = {
-            Asset("ANIM", "anim/new_elixirs.zip"),
-            Asset("ANIM", "anim/abigail_buff_drip.zip"),
-        }
-        -- define which properties overwrite their parent properties
-        local priority_properties = {
-            "duration",
-            "tickrate",
-            "applyfx",
-            "dripfx",
-            "dripfxfn",
-            "driptaskfn",
-            "onattachfn",
-            "ondetachfn",
-            "onextendfn",
-            "ontimerdonefn",
-            "itemfn",
-            "bufffn"
-        }
-        local explicit_params = {}
-        for _, property in ipairs(priority_properties) do
-            explicit_params[property] = priority_select(property, params)
-        end
-        local prefabs = {
-            prefab .. "_buff",
-            explicit_params.applyfx,
-            explicit_params.dripfx,
-        }
-        local elixirfn = function() return create_newelixir(prefab, explicit_params) end
-        local bufffn = function() return create_newelixir_buff(prefab, explicit_params) end
-        table.insert(all_prefabs, GLOBAL.Prefab(prefab, elixirfn, assets, prefabs))
-        table.insert(all_prefabs, GLOBAL.Prefab(prefab .. "_buff", bufffn))
+for _, prefab in ipairs(elixirs.new_elixir_prefabs) do
+    local raw_params = elixirs[prefab]
+    local assets = {
+        Asset("ANIM", "anim/new_elixirs.zip"),
+        Asset("ANIM", "anim/abigail_buff_drip.zip"),
+    }
+    -- define which properties overwrite their parent properties
+    local priority_properties = {
+        "duration",
+        "tickrate",
+        "applyfx",
+        "dripfx",
+        "dripfxfn",
+        "driptaskfn",
+        "onattachfn",
+        "ondetachfn",
+        "onextendfn",
+        "ontimerdonefn",
+        "itemfn",
+        "bufffn"
+    }
+    local explicit_params = {}
+    for _, property in ipairs(priority_properties) do
+        explicit_params[property] = priority_select(property, raw_params)
     end
+    local prefabs = {
+        prefab .. "_buff",
+        explicit_params.applyfx,
+        explicit_params.dripfx,
+    }
+    local elixirfn = function() return create_newelixir(prefab, explicit_params) end
+    local bufffn = function() return create_newelixir_buff(prefab, explicit_params) end
+    table.insert(all_prefabs, Prefab(prefab, elixirfn, assets, prefabs))
+    table.insert(all_prefabs, Prefab(prefab .. "_buff", bufffn))
 end
 
 return unpack(all_prefabs)

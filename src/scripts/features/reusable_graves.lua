@@ -1,4 +1,3 @@
-
 local function OnHit(gravestone)
     gravestone.AnimState:PlayAnimation("grave" .. gravestone.random_stone_choice .. "_hit")
     gravestone.AnimState:PushAnimation("grave" .. gravestone.random_stone_choice, false)
@@ -9,7 +8,7 @@ local function OnDestroy(gravestone, _)
         gravestone.mound:DropBuriedTrinket()
         gravestone.mound:Remove()
     end
-    local loot = { "marble", "marble", "boneshard" }
+    local loot = { "rocks", "rocks", "rocks", "rocks", "boneshard" }
     for _, v in ipairs(loot) do
         gravestone.components.lootdropper:SpawnLootPrefab(v)
     end
@@ -21,6 +20,13 @@ local function OnDestroy(gravestone, _)
     gravestone:Remove()
 end
 
+local function OnBuilt(gravestone, _)
+    if gravestone.mound then
+        gravestone.mound:RemoveComponent("workable")
+        gravestone.mound.AnimState:PlayAnimation("dug")
+    end
+end
+
 local function RemoveGhost(gravestone)
     if gravestone.ghost then
         gravestone.ghost.sg:GoToState("dissipate")
@@ -29,7 +35,8 @@ end
 
 local function OnSecondDig(mound, worker)
     mound:DropBuriedTrinket()
-    mound:SetBuriedState(false)
+    mound:RemoveComponent("workable")
+    mound.AnimState:PlayAnimation("dug")
     if worker.components.sanity then
         worker.components.sanity:DoDelta(-TUNING.SANITY_SMALL)
     end
@@ -39,21 +46,16 @@ local function DropBuriedTrinket(mound)
     if mound.buried_trinket then
         mound.components.lootdropper:SpawnLootPrefab(mound.buried_trinket)
     end
+    mound.buried_trinket = nil
 end
 
-local function SetBuriedState(mound, buried, offering)
-    if buried then
-        mound.AnimState:PlayAnimation("gravedirt")
-        mound:AddComponent("workable")
-        mound.components.workable:SetWorkAction(GLOBAL.ACTIONS.DIG)
-        mound.components.workable:SetWorkLeft(1)
-        mound.components.workable:SetOnFinishCallback(OnSecondDig)
-        mound.buried_trinket = offering
-    else
-        mound.AnimState:PlayAnimation("dug")
-        mound:RemoveComponent("workable")
-        mound.buried_trinket = nil
-    end
+local function BuryTrinket(mound, trinket)
+    mound.buried_trinket = trinket
+    mound:AddComponent("workable")
+    mound.components.workable:SetWorkAction(GLOBAL.ACTIONS.DIG)
+    mound.components.workable:SetWorkLeft(1)
+    mound.components.workable:SetOnFinishCallback(OnSecondDig)
+    mound.AnimState:PlayAnimation("gravedirt")
 end
 
 -- copied this method from prefabs/gravestone.lua and added more conditions to the front
@@ -96,7 +98,7 @@ AddAction("BURY", "Bury", function(act)
         return
     end
 
-    mound:SetBuriedState(true, offering.prefab)
+    mound:BuryTrinket(offering.prefab)
     mound.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/emerge")
     if player.components.sanity ~= nil then
         player.components.sanity:DoDelta(TUNING.SANITY_SMALL)
@@ -112,7 +114,6 @@ AddPrefabPostInit("gravestone", function(gravestone)
 
     gravestone:AddTag("structure")
 
-    gravestone.entity:SetPristine()
     if not GLOBAL.TheWorld.ismastersim then return gravestone end
 
     gravestone.RemoveGhost = RemoveGhost
@@ -136,45 +137,39 @@ AddPrefabPostInit("gravestone", function(gravestone)
     gravestone.OnDayChange = OnDayChange
     gravestone:WatchWorldState("cycles", gravestone.OnDayChange)
 
-    if #GLOBAL.AllPlayers > 0 then
-        -- gravestone was probably created by a player (not worldgen)
-        if gravestone.mound then
-            gravestone.mound:SetBuriedState(false)
-        end
-    end
-
     gravestone:ListenForEvent("onremove", RemoveGhost)
     gravestone:ListenForEvent("worked", function(mound)
         mound.parent:RemoveGhost()
     end, gravestone.mound)
+    gravestone:ListenForEvent("onbuilt", OnBuilt)
 end)
 
 AddPrefabPostInit("mound", function(mound)
     mound.entity:AddSoundEmitter()
 
-    mound.entity:SetPristine()
     if not GLOBAL.TheWorld.ismastersim then return mound end
 
     mound.DropBuriedTrinket = DropBuriedTrinket
-    mound.SetBuriedState = SetBuriedState
+    mound.BuryTrinket = BuryTrinket
 
     local OldOnSave = mound.OnSave
     mound.OnSave = function(self, data)
-        OldOnSave(self, data)
         if data ~= nil then
             data.buried_trinket = self.buried_trinket
         end
+        OldOnSave(self, data)
     end
 
     local OldOnLoad = mound.OnLoad
     mound.OnLoad = function(self, data)
         OldOnLoad(self, data)
-        if data ~= nil then
-            if data.dug then
-                self:SetBuriedState(false)
-            elseif data.buried_trinket then
-                self:SetBuriedState(true, data.buried_trinket)
-            end
+        if data ~= nil and data.buried_trinket ~= nil then
+            self.buried_trinket = data.buried_trinket
+            self:AddComponent("workable")
+            self.components.workable:SetWorkAction(GLOBAL.ACTIONS.DIG)
+            self.components.workable:SetWorkLeft(1)
+            self.components.workable:SetOnFinishCallback(OnSecondDig)
+            self.AnimState:PlayAnimation("gravedirt")
         end
     end
 end)
