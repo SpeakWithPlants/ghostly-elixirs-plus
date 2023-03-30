@@ -112,8 +112,6 @@ elixirs.all_elixirs.bufffn = function(_, params)
 
     buff.params = params
 
-    buff:AddTag("CLASSIFIED")
-
     return buff
 end
 elixirs.all_elixirs.dripfxfn = function(buff, abigail)
@@ -123,7 +121,11 @@ elixirs.all_elixirs.dripfxfn = function(buff, abigail)
     end
 end
 elixirs.all_elixirs.driptaskfn = function(buff, abigail)
-    return buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+    buff.driptask = buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+end
+elixirs.all_elixirs.enddriptaskfn = function(buff, _)
+    buff.driptask:Cancel()
+    buff.driptask = nil
 end
 elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     buff.entity:SetParent(abigail.entity)
@@ -135,8 +137,8 @@ elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     if buff.params.ontickfn ~= nil then
         buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
     end
-    if buff.params.dripfxfn ~= nil then
-        buff.driptask = buff.params.driptaskfn(buff, abigail)
+    if buff.params.dripfxfn ~= nil and buff.params.driptaskfn ~= nil then
+        buff.params.driptaskfn(buff, abigail)
     end
     buff:ListenForEvent("death", function()
         buff.components.debuff:Stop()
@@ -155,9 +157,8 @@ elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
         buff.task:Cancel()
         buff.task = nil
     end
-    if buff.driptask ~= nil then
-        buff.driptask:Cancel()
-        buff.driptask = nil
+    if buff.enddriptaskfn ~= nil then
+        buff.params.enddriptaskfn(buff, abigail)
     end
     buff:Remove()
 end
@@ -203,7 +204,11 @@ end
 --------------------------------------------------------------------------
 elixirs.all_nightmare_elixirs = {
     duration = TUNING.TOTAL_DAY_TIME / 2,
+    dripfx = "cane_ancient_fx",
 }
+elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
+    buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+end
 elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     if buff.target ~= nil and buff.target.prefab == "abigail" then
         -- do small nightmare burst if a nightmare elixir reaches the end of its duration
@@ -224,6 +229,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_sanityaura =
 {
+    duration = TUNING.TOTAL_DAY_TIME * 2,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
@@ -241,6 +247,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_lightaura =
 {
+    duration = TUNING.TOTAL_DAY_TIME * 2,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
@@ -336,8 +343,7 @@ elixirs.newelixir_insanitydamage =
 {
     nightmare = true,
     applyfx = "ghostlyelixir_slowregen_fx",
-    dripfx = "shadow_trap_debuff_fx",
-    -- TODO define dripfxfn and driptaskfn
+    dripfx = "cane_ancient_fx",
 }
 elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex = function(_, abigail)
     if abigail._playerlink ~= nil then
@@ -401,8 +407,6 @@ elixirs.newelixir_shadowfighter =
 {
     nightmare = true,
     applyfx = "ghostlyelixir_slowregen_fx",
-    dripfx = "thurible_smoke",
-    -- TODO define dripfxfn and driptaskfn
 }
 elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
     -- allows abigail to attack shadow creatures
@@ -419,8 +423,6 @@ elixirs.newelixir_lightning =
 {
     nightmare = true,
     applyfx = "ghostlyelixir_attack_fx",
-    dripfx = "electrichitsparks",
-    -- TODO define dripfxfn and driptaskfn
 }
 elixirs.newelixir_lightning.smitefn = function(target)
     if math.random() < TUNING.NEW_ELIXIRS.LIGHTNING.SMITE_CHANCE then
@@ -457,13 +459,13 @@ elixirs.newelixir_lightning.onattachfn = function(buff, abigail)
         abigail:AddComponent("electricattacks")
     end
     abigail.components.electricattacks:AddSource(buff)
-    abigail:ListenForEvent("onareaattackother", elixirs.lightning.onareaattackotherfn)
+    abigail:ListenForEvent("onareaattackother", elixirs.newelixir_lightning.onareaattackotherfn)
 end
 elixirs.newelixir_lightning.ondetachfn = function(buff, abigail)
     if abigail.components.electricattacks ~= nil then
         abigail.components.electricattacks:RemoveSource(buff)
     end
-    abigail:RemoveEventCallback("onareaattackother", elixirs.lightning.onareaattackotherfn)
+    abigail:RemoveEventCallback("onareaattackother", elixirs.newelixir_lightning.onareaattackotherfn)
 end
 
 --------------------------------------------------------------------------

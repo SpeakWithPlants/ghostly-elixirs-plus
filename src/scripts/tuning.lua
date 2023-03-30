@@ -11,7 +11,8 @@ TUNING.NEW_ELIXIRS = {
 
     -- continued tuning options for new elixirs below
     ALL_NIGHTMARE_ELIXIRS = {
-        SANITYAURA = -TUNING.SANITYAURA_LARGE
+        SANITYAURA = -TUNING.SANITYAURA_LARGE,
+        DRIP_FX_PERIOD = 10 * GLOBAL.FRAMES,
     },
     SANITYAURA = {
         AURA = TUNING.SANITYAURA_MED

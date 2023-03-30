@@ -31,16 +31,6 @@ AddCharacterRecipe("newelixir_healthdamage", {
     image = "newelixir_healthdamage.tex",
 })
 
-AddCharacterRecipe("newelixir_cleanse", {
-    Ingredient("ash", 2),
-    Ingredient("petals", 2),
-    Ingredient("ghostflower", 2)
-}, TECH.NONE, {
-    builder_tag = "elixirbrewer",
-    atlas = "images/inventoryimages/newelixir_cleanse.xml",
-    image = "newelixir_cleanse.tex",
-})
-
 AddCharacterRecipe("newelixir_insanitydamage", {
     Ingredient("stinger", 1),
     Ingredient("nightmarefuel", 5),
@@ -69,6 +59,16 @@ AddCharacterRecipe("newelixir_lightning", {
     builder_tag = "elixirbrewer",
     atlas = "images/inventoryimages/newelixir_lightning.xml",
     image = "newelixir_lightning.tex",
+})
+
+AddCharacterRecipe("newelixir_cleanse", {
+    Ingredient("ash", 2),
+    Ingredient("petals", 2),
+    Ingredient("ghostflower", 2)
+}, TECH.NONE, {
+    builder_tag = "elixirbrewer",
+    atlas = "images/inventoryimages/newelixir_cleanse.xml",
+    image = "newelixir_cleanse.tex",
 })
 
 -- make sure you manually update the loot drops for destroyed gravestones (features/reusable_graves.lua)

@@ -19,10 +19,10 @@ local function create_newelixir(prefab, params)
     local elixir = params.itemfn(prefab, params)
     elixir.params = params
     -- post item functions, after original entity creation
-    if params.postitemfn then
-        elixir = params.postitemfn(elixir)
+    if elixirs[prefab].postitemfn then
+        elixir = elixirs[prefab].postitemfn(elixir)
     end
-    if params.nightmare and nightmare_params.postitemfn then
+    if elixirs[prefab].nightmare and nightmare_params.postitemfn then
         elixir = nightmare_params.postitemfn(elixir)
     end
     if general_params.postitemfn then
@@ -36,10 +36,10 @@ local function create_newelixir_buff(prefab, params)
     local buff = params.bufffn(prefab, params)
     buff.params = params
     -- post buff functions, after original entity creation
-    if params.postbufffn then
-        buff = params.postbufffn(buff)
+    if elixirs[prefab].postbufffn then
+        buff = elixirs[prefab].postbufffn(buff)
     end
-    if params.nightmare and nightmare_params.postbufffn then
+    if elixirs[prefab].nightmare and nightmare_params.postbufffn then
         buff = nightmare_params.postbufffn(buff)
     end
     if general_params.postbufffn then
@@ -62,6 +62,7 @@ for _, prefab in ipairs(elixirs.new_elixir_prefabs) do
         "dripfx",
         "dripfxfn",
         "driptaskfn",
+        "enddriptaskfn",
         "onattachfn",
         "ondetachfn",
         "onextendfn",
@@ -73,6 +74,7 @@ for _, prefab in ipairs(elixirs.new_elixir_prefabs) do
     for _, property in ipairs(priority_properties) do
         explicit_params[property] = priority_select(property, raw_params)
     end
+    explicit_params.nightmare = raw_params.nightmare or false
     local prefabs = {
         prefab .. "_buff",
         explicit_params.applyfx,
