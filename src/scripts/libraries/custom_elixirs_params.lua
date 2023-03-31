@@ -206,14 +206,20 @@ elixirs.all_nightmare_elixirs = {
     duration = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DURATION,
     dripfx = "cane_ancient_fx",
 }
+elixirs.all_nightmare_elixirs.dripfxfn = function(buff, abigail)
+    if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
+        local ax, ay, az = abigail.Transform:GetWorldPosition()
+        local angle = math.random(0, PI2)
+        local dripfx = SpawnPrefab(buff.potion_tunings.dripfx)
+        dripfx.Transform:SetPosition(ax + 0.5 * math.cos(angle), ay, az - 0.5 * math.sin(angle))
+    end
+end
 elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
     buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
 end
-elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
-    if buff.target ~= nil and buff.target.prefab == "abigail" then
-        -- do small nightmare burst if a nightmare elixir reaches the end of its duration
-        buff.target:DoNightmareBurst(-TUNING.SANITY_LARGE, 1.2, 7.0, 3.0)
-    end
+elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff, _)
+    -- do small nightmare burst if a nightmare elixir reaches the end of its duration
+    buff.target:DoNightmareBurst(-TUNING.SANITY_LARGE, 1.0, 7.0, 3.0)
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
@@ -455,22 +461,28 @@ elixirs.newelixir_lightning.smitefn = function(target)
         end
     end
 end
+elixirs.newelixir_lightning.bonusdamagefn = function(abigail, target, damage)
+    if target ~= nil and target:GetIsWet() then
+        SpawnPrefab("electrichitsparks"):AlignToTarget(target, abigail, true)
+        return damage * 1.5
+    end
+    return damage * 0.5
+end
 elixirs.newelixir_lightning.onareaattackotherfn = function(_, data)
     local target = data ~= nil and data.target
     if target ~= nil then
         elixirs.newelixir_lightning.smitefn(target)
     end
 end
-elixirs.newelixir_lightning.onattachfn = function(buff, abigail)
-    if abigail.components.electricattacks == nil then
-        abigail:AddComponent("electricattacks")
+elixirs.newelixir_lightning.onattachfn = function(_, abigail)
+    if abigail.components.combat ~= nil then
+        abigail.components.combat.bonusdamagefn = elixirs.newelixir_lightning.bonusdamagefn
     end
-    abigail.components.electricattacks:AddSource(buff)
     abigail:ListenForEvent("onareaattackother", elixirs.newelixir_lightning.onareaattackotherfn)
 end
-elixirs.newelixir_lightning.ondetachfn = function(buff, abigail)
-    if abigail.components.electricattacks ~= nil then
-        abigail.components.electricattacks:RemoveSource(buff)
+elixirs.newelixir_lightning.ondetachfn = function(_, abigail)
+    if abigail.components.combat ~= nil then
+        abigail.components.combat.bonusdamagefn = nil
     end
     abigail:RemoveEventCallback("onareaattackother", elixirs.newelixir_lightning.onareaattackotherfn)
 end

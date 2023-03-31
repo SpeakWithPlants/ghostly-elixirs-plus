@@ -29,6 +29,7 @@ Assets = {
 PrefabFiles = {
 	"custom_elixirs",
 	"gravestone_placer",
+	"nightmare_burst"
 }
 
 modimport "scripts/tuning"

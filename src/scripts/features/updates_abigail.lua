@@ -14,6 +14,7 @@ local function SetNightmareForm(abigail, enable)
 end
 
 local function DoNightmareBurst(abigail, sanity, scale, range_end, range_start)
+    -- TODO move all this to prefabs/nightmare_burst.lua
     scale = scale or 1.0
     range_end = range_end or 10.0
     range_start = range_start or 5.0
@@ -31,8 +32,9 @@ local function DoNightmareBurst(abigail, sanity, scale, range_end, range_start)
             p.components.sanity:DoDelta(sanity * distance_multiplier)
         end
     end
-    local nightmare_burst = GLOBAL.SpawnPrefab("stalker_shield")
+    local nightmare_burst = GLOBAL.SpawnPrefab("nightmare_burst")
     nightmare_burst.Transform:SetPosition(abigail.Transform:GetWorldPosition())
+    -- end comment
     nightmare_burst.AnimState:SetScale(scale, scale, scale)
     abigail.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
 end
