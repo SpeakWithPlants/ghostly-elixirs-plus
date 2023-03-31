@@ -10,14 +10,20 @@ TUNING.NEW_ELIXIRS = {
     },
 
     -- continued tuning options for new elixirs below
+    ALL_ELIXIRS = {
+        DURATION = TUNING.TOTAL_DAY_TIME,
+    },
     ALL_NIGHTMARE_ELIXIRS = {
+        DURATION = TUNING.TOTAL_DAY_TIME / 2,
         SANITYAURA = -TUNING.SANITYAURA_LARGE,
         DRIP_FX_PERIOD = 10 * GLOBAL.FRAMES,
     },
     SANITYAURA = {
-        AURA = TUNING.SANITYAURA_MED
+        DURATION = TUNING.TOTAL_DAY_TIME * 2,
+        AURA = TUNING.SANITYAURA_MED,
     },
     LIGHTAURA = {
+        DURATION = TUNING.TOTAL_DAY_TIME * 2,
         INTENSITY = 0.5,
         RADIUS = 5,
         FALLOFF = 0.9,
@@ -60,6 +66,7 @@ TUNING.NEW_ELIXIRS = {
         SMITE_CHANCE = 0.1
     },
     CLEANSE = {
+        DURATION = 0.1,
         HEALTH_GAIN = 0.3,
         SANITY_GAIN = TUNING.SANITY_LARGE
     },

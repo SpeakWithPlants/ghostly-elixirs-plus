@@ -42,7 +42,7 @@ elixirs.new_elixir_prefabs = {
     "newelixir_cleanse",
 }
 elixirs.all_elixirs = {
-    duration = TUNING.TOTAL_DAY_TIME,
+    duration = TUNING.NEW_ELIXIRS.ALL_ELIXIRS.DURATION,
     tickrate = 0.5,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
@@ -203,7 +203,7 @@ end
 --[[ all nightmare elixirs ]]
 --------------------------------------------------------------------------
 elixirs.all_nightmare_elixirs = {
-    duration = TUNING.TOTAL_DAY_TIME / 2,
+    duration = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DURATION,
     dripfx = "cane_ancient_fx",
 }
 elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
@@ -229,7 +229,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_sanityaura =
 {
-    duration = TUNING.TOTAL_DAY_TIME * 2,
+    duration = TUNING.NEW_ELIXIRS.SANITYAURA.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
@@ -247,7 +247,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_lightaura =
 {
-    duration = TUNING.TOTAL_DAY_TIME * 2,
+    duration = TUNING.NEW_ELIXIRS.LIGHTAURA.DURATION,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
@@ -284,6 +284,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_healthdamage =
 {
+    duration = TUNING.NEW_ELIXIRS.HEALTHDAMAGE.DURATION,
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
 }
@@ -342,6 +343,7 @@ end
 elixirs.newelixir_insanitydamage =
 {
     nightmare = true,
+    duration = TUNING.NEW_ELIXIRS.INSANITYDAMAGE.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "cane_ancient_fx",
 }
@@ -406,6 +408,7 @@ end
 elixirs.newelixir_shadowfighter =
 {
     nightmare = true,
+    duration = TUNING.NEW_ELIXIRS.SHADOWFIGHTER.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
 }
 elixirs.newelixir_shadowfighter.onattachfn = function(_, abigail)
@@ -422,6 +425,7 @@ end
 elixirs.newelixir_lightning =
 {
     nightmare = true,
+    duration = TUNING.NEW_ELIXIRS.LIGHTNING.DURATION,
     applyfx = "ghostlyelixir_attack_fx",
 }
 elixirs.newelixir_lightning.smitefn = function(target)
@@ -473,7 +477,7 @@ end
 --------------------------------------------------------------------------
 elixirs.newelixir_cleanse =
 {
-    duration = 0.1,
+    duration = TUNING.NEW_ELIXIRS.CLEANSE.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
