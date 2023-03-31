@@ -51,7 +51,7 @@ elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
     if abigail ~= nil then
         local current_buff = abigail:GetDebuff("elixir_buff")
         if current_buff ~= nil then
-            if current_buff.params.nightmare and not elixir.params.nightmare and elixir.prefab ~= "newelixir_cleanse" then
+            if current_buff.potion_tunings.nightmare and not elixir.potion_tunings.nightmare and elixir.prefab ~= "newelixir_cleanse" then
                 return false, "WRONG_ELIXIR"
             end
             if current_buff.prefab ~= elixir.buff_prefab then
@@ -84,7 +84,7 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
     elixir.entity:SetPristine()
     if not TheWorld.ismastersim then return elixir end
 
-    elixir.params = params
+    elixir.potion_tunings = params
 
     elixir:AddComponent("inspectable")
     elixir:AddComponent("inventoryitem")
@@ -110,18 +110,18 @@ elixirs.all_elixirs.bufffn = function(_, params)
     buff.entity:Hide()
     buff.persists = false
 
-    buff.params = params
+    buff.potion_tunings = params
 
     return buff
 end
 elixirs.all_elixirs.dripfxfn = function(buff, abigail)
     if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
         local x, y, z = abigail.Transform:GetWorldPosition()
-        SpawnPrefab(buff.params.dripfx).Transform:SetPosition(x, y, z)
+        SpawnPrefab(buff.potion_tunings.dripfx).Transform:SetPosition(x, y, z)
     end
 end
 elixirs.all_elixirs.driptaskfn = function(buff, abigail)
-    buff.driptask = buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+    buff.driptask = buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
 end
 elixirs.all_elixirs.enddriptaskfn = function(buff, _)
     buff.driptask:Cancel()
@@ -130,27 +130,27 @@ end
 elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     buff.entity:SetParent(abigail.entity)
     buff.Transform:SetPosition(0, 0, 0)
-    abigail:SetNightmareForm(buff.params.nightmare)
-    if buff.params.onattachfn ~= nil then
-        buff.params.onattachfn(buff, abigail)
+    abigail:SetNightmareForm(buff.potion_tunings.nightmare)
+    if buff.potion_tunings.onattachfn ~= nil then
+        buff.potion_tunings.onattachfn(buff, abigail)
     end
-    if buff.params.ontickfn ~= nil then
-        buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
+    if buff.potion_tunings.ontickfn ~= nil then
+        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, abigail)
     end
-    if buff.params.dripfxfn ~= nil and buff.params.driptaskfn ~= nil then
-        buff.params.driptaskfn(buff, abigail)
+    if buff.potion_tunings.dripfxfn ~= nil and buff.potion_tunings.driptaskfn ~= nil then
+        buff.potion_tunings.driptaskfn(buff, abigail)
     end
     buff:ListenForEvent("death", function()
         buff.components.debuff:Stop()
     end, abigail)
-    if buff.params.applyfx ~= nil and not abigail.inlimbo then
-        local applyfx = SpawnPrefab(buff.params.applyfx)
+    if buff.potion_tunings.applyfx ~= nil and not abigail.inlimbo then
+        local applyfx = SpawnPrefab(buff.potion_tunings.applyfx)
         applyfx.entity:SetParent(abigail.entity)
     end
 end
 elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
-    if buff.params.ondetachfn ~= nil then
-        buff.params.ondetachfn(buff, abigail)
+    if buff.potion_tunings.ondetachfn ~= nil then
+        buff.potion_tunings.ondetachfn(buff, abigail)
     end
     abigail:SetNightmareForm(false)
     if buff.task ~= nil then
@@ -158,28 +158,28 @@ elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
         buff.task = nil
     end
     if buff.enddriptaskfn ~= nil then
-        buff.params.enddriptaskfn(buff, abigail)
+        buff.potion_tunings.enddriptaskfn(buff, abigail)
     end
     buff:Remove()
 end
 elixirs.all_elixirs.buffextendfn = function(buff, abigail)
-    if (buff.components.timer:GetTimeLeft("decay") or 0) < buff.params.duration then
+    if (buff.components.timer:GetTimeLeft("decay") or 0) < buff.potion_tunings.duration then
         buff.components.timer:StopTimer("decay")
-        buff.components.timer:StartTimer("decay", buff.params.duration)
+        buff.components.timer:StartTimer("decay", buff.potion_tunings.duration)
     end
     if buff.task ~= nil then
         buff.task:Cancel()
-        buff.task = buff:DoPeriodicTask(buff.params.tickrate, buff.params.ontickfn, nil, abigail)
+        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, abigail)
     end
-    if buff.params.applyfx ~= nil and not abigail.inlimbo then
-        local applyfx = SpawnPrefab(buff.params.applyfx)
+    if buff.potion_tunings.applyfx ~= nil and not abigail.inlimbo then
+        local applyfx = SpawnPrefab(buff.potion_tunings.applyfx)
         applyfx.entity:SetParent(abigail.entity)
     end
 end
 elixirs.all_elixirs.bufftimerdonefn = function(buff, data)
     if data.name == "decay" then
-        if buff.params.ontimerdonefn ~= nil then
-            buff.params.ontimerdonefn(buff)
+        if buff.potion_tunings.ontimerdonefn ~= nil then
+            buff.potion_tunings.ontimerdonefn(buff)
         end
         buff.components.debuff:Stop()
     end
@@ -193,7 +193,7 @@ elixirs.all_elixirs.postbufffn = function(buff)
     buff.components.debuff:SetExtendedFn(elixirs.all_elixirs.buffextendfn)
     buff.components.debuff.keepondespawn = true
     buff:AddComponent("timer")
-    buff.components.timer:StartTimer("decay", buff.params.duration)
+    buff.components.timer:StartTimer("decay", buff.potion_tunings.duration)
     buff:ListenForEvent("timerdone", elixirs.all_elixirs.bufftimerdonefn)
 
     return buff
@@ -207,7 +207,7 @@ elixirs.all_nightmare_elixirs = {
     dripfx = "cane_ancient_fx",
 }
 elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
-    buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.params.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+    buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
 end
 elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     if buff.target ~= nil and buff.target.prefab == "abigail" then
@@ -251,24 +251,27 @@ elixirs.newelixir_lightaura =
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
 }
-elixirs.newelixir_lightaura.bufffn = function(_, _)
-    local inst = CreateEntity()
+elixirs.newelixir_lightaura.bufffn = function(_, params)
+    local buff = CreateEntity()
 
-    inst.entity:AddTransform()
-    inst.entity:AddLight()
-    inst.entity:AddNetwork()
+    buff.entity:AddTransform()
+    buff.entity:AddLight()
+    buff.entity:AddNetwork()
 
-    inst:AddTag("FX")
+    buff:AddTag("FX")
 
-    inst.Light:SetIntensity(TUNING.NEW_ELIXIRS.LIGHTAURA.INTENSITY)
-    inst.Light:SetRadius(TUNING.NEW_ELIXIRS.LIGHTAURA.RADIUS)
-    inst.Light:SetFalloff(TUNING.NEW_ELIXIRS.LIGHTAURA.FALLOFF)
-    inst.Light:Enable(true)
-    inst.Light:SetColour(255 / 255, 160 / 255, 160 / 255)
+    buff.Light:SetIntensity(TUNING.NEW_ELIXIRS.LIGHTAURA.INTENSITY)
+    buff.Light:SetRadius(TUNING.NEW_ELIXIRS.LIGHTAURA.RADIUS)
+    buff.Light:SetFalloff(TUNING.NEW_ELIXIRS.LIGHTAURA.FALLOFF)
+    buff.Light:Enable(true)
+    buff.Light:SetColour(255 / 255, 160 / 255, 160 / 255)
 
-    inst.entity:SetPristine()
+    buff.entity:SetPristine()
+    if not TheWorld.ismastersim then return buff end
 
-    return inst
+    buff.potion_tunings = params
+
+    return buff
 end
 elixirs.newelixir_lightaura.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end

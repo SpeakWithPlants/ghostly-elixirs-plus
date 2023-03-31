@@ -17,7 +17,6 @@ end
 local function create_newelixir(prefab, params)
     -- general_params.itemfn MUST be defined
     local elixir = params.itemfn(prefab, params)
-    elixir.params = params
     -- post item functions, after original entity creation
     if elixirs[prefab].postitemfn then
         elixir = elixirs[prefab].postitemfn(elixir)
@@ -34,7 +33,6 @@ end
 local function create_newelixir_buff(prefab, params)
     -- general_params.bufffn MUST be defined
     local buff = params.bufffn(prefab, params)
-    buff.params = params
     -- post buff functions, after original entity creation
     if elixirs[prefab].postbufffn then
         buff = elixirs[prefab].postbufffn(buff)
