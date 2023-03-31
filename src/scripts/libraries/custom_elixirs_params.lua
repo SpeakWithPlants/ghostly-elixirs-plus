@@ -458,7 +458,7 @@ end
 elixirs.newelixir_lightning.onareaattackotherfn = function(_, data)
     local target = data ~= nil and data.target
     if target ~= nil then
-        elixirs.lightning.smitefn(target)
+        elixirs.newelixir_lightning.smitefn(target)
     end
 end
 elixirs.newelixir_lightning.onattachfn = function(buff, abigail)

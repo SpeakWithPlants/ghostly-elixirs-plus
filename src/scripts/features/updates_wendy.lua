@@ -8,9 +8,9 @@ AddPrefabPostInit("wendy", function(wendy)
             local active_elixir = abigail:GetDebuff("elixir_buff")
             if active_elixir ~= nil and target:HasDebuff("abigail_vex_debuff") then
                 if active_elixir.prefab == "newelixir_healthdamage_buff" then
-                    return elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex(self)
+                    return elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex(self, abigail)
                 elseif active_elixir.prefab == "newelixir_insanitydamage_buff" then
-                    return elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex(self)
+                    return elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex(self, abigail)
                 elseif active_elixir.prefab == "newelixir_shadowfighter_buff" then
                     if target:HasTag("shadowcreature") then
                         return TUNING.NEW_ELIXIRS.SHADOWFIGHTER.WENDY_VEX.DAMAGE_MULT

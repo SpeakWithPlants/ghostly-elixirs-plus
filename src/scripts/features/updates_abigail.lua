@@ -20,21 +20,19 @@ local function DoNightmareBurst(abigail, sanity, scale, range_end, range_start)
     if range_start == range_end then
         range_end = range_start + 1
     end
-    local abigail_pos = abigail.Transform:GetWorldPosition()
-    local x, y, z = abigail_pos
+    local x, y, z = abigail.Transform:GetWorldPosition()
     local necessary_tags = { "player" }
     local nearby_players = GLOBAL.TheSim:FindEntities(x, y, z, range_end, necessary_tags)
     for _, p in ipairs(nearby_players) do
         if p.components.sanity ~= nil then
-            local player_pos = p.Transform:GetWorldPosition()
-            local distance = (player_pos - abigail_pos):Length()
-            local distance_proportion = (distance - range_start) / (range_end - range_start)
+            local distance = math.sqrt(p:GetDistanceSqToPoint(x, y, z))
+            local distance_proportion = math.clamp((distance - range_start) / (range_end - range_start), 0, 1)
             local distance_multiplier = 1.0 - (math.max(0.0, math.min(1.0, distance_proportion)))
             p.components.sanity:DoDelta(sanity * distance_multiplier)
         end
     end
     local nightmare_burst = GLOBAL.SpawnPrefab("stalker_shield")
-    nightmare_burst.Transform:SetPosition(abigail:GetPosition():Get())
+    nightmare_burst.Transform:SetPosition(abigail.Transform:GetWorldPosition())
     nightmare_burst.AnimState:SetScale(scale, scale, scale)
     abigail.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
 end
@@ -65,9 +63,9 @@ AddPrefabPostInit("abigail", function(abigail)
     end
 
     -- huge nightmare burst on death while in nightmare form
-    abigail:ListenForEvent("death", function()
-        if abigail.nightmare then
-            abigail:DoNightmareBurst(-TUNING.SANITY_HUGE, 1.5)
+    abigail:ListenForEvent("stopaura", function(self)
+        if self.nightmare then
+            self:DoNightmareBurst(-TUNING.SANITY_HUGE, 1.5)
         end
     end)
 end)
