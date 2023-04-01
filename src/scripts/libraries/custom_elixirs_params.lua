@@ -219,7 +219,7 @@ elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
 end
 elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff, _)
     -- do small nightmare burst if a nightmare elixir reaches the end of its duration
-    buff.target:DoNightmareBurst(-TUNING.SANITY_LARGE, 1.0, 7.0, 3.0)
+    buff.target:DoNightmareBurst(true)
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
