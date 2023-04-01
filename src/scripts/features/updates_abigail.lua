@@ -1,3 +1,5 @@
+local elixirs = require "libraries/custom_elixirs_params"
+
 local function SetNightmareForm(abigail, enable)
     if enable then
         abigail.AnimState:SetBuild("ghost_abigail_nightmare_build")
@@ -13,19 +15,12 @@ local function SetNightmareForm(abigail, enable)
     end
 end
 
-local function DoNightmareBurst(abigail, small)
-    local prefab = small and "nightmare_burst_small" or "nightmare_burst"
-    local nightmare_burst = GLOBAL.SpawnPrefab(prefab)
-    nightmare_burst.Transform:SetPosition(abigail.Transform:GetWorldPosition())
-end
-
 AddPrefabPostInit("abigail", function(abigail)
     if not GLOBAL.TheWorld.ismastersim then return abigail end
 
     abigail.nightmare = (abigail.AnimState:GetBuild() == "ghost_abigail_nightmare_build")
 
     abigail.SetNightmareForm = SetNightmareForm
-    abigail.DoNightmareBurst = DoNightmareBurst
 
     -- add wendy inspect dialogue for nightmare abigail
     local OldGetStatus = abigail.components.inspectable.getstatus
@@ -47,7 +42,7 @@ AddPrefabPostInit("abigail", function(abigail)
     -- huge nightmare burst on death while in nightmare form
     abigail:ListenForEvent("stopaura", function(self)
         if self.nightmare then
-            self:DoNightmareBurst()
+            elixirs.all_nightmare_elixirs.donightmareburst(self)
         end
     end)
 end)

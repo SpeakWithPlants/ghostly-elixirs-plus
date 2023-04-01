@@ -206,6 +206,15 @@ elixirs.all_nightmare_elixirs = {
     duration = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DURATION,
     dripfx = "cane_ancient_fx",
 }
+elixirs.all_nightmare_elixirs.donightmareburst = function(source, small)
+    local prefab = small and "nightmare_burst_small" or "nightmare_burst"
+    local nightmare_burst = SpawnPrefab(prefab)
+    local x, y, z = source.Transform:GetWorldPosition()
+    if small then
+        y = y + 2
+    end
+    nightmare_burst.Transform:SetPosition(x, y, z)
+end
 elixirs.all_nightmare_elixirs.dripfxfn = function(buff, abigail)
     if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
         local ax, ay, az = abigail.Transform:GetWorldPosition()
@@ -217,9 +226,9 @@ end
 elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
     buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
 end
-elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff, _)
+elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     -- do small nightmare burst if a nightmare elixir reaches the end of its duration
-    buff.target:DoNightmareBurst(true)
+    elixirs.all_nightmare_elixirs.donightmareburst(buff, true)
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
