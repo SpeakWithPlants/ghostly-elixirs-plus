@@ -1,5 +1,3 @@
-local elixirs = require "libraries/custom_elixirs_params"
-
 local function SetNightmareForm(abigail, enable)
     if enable then
         abigail.AnimState:SetBuild("ghost_abigail_nightmare_build")
