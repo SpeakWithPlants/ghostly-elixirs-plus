@@ -50,14 +50,21 @@ elixirs.all_elixirs = {
 elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
     if abigail ~= nil then
         local current_buff = abigail:GetDebuff("elixir_buff")
+        local cleanse = (elixir.prefab == "newelixir_cleanse")
         if current_buff ~= nil then
-            if current_buff.potion_tunings.nightmare and not elixir.potion_tunings.nightmare and elixir.prefab ~= "newelixir_cleanse" then
+            local current_nightmare = current_buff.potion_tunings.nightmare
+            local new_nightmare = elixir.potion_tunings.nightmare
+            if current_nightmare and not new_nightmare and not cleanse then
                 return false, "WRONG_ELIXIR"
             end
             if current_buff.prefab ~= elixir.buff_prefab then
+                if new_nightmare or cleanse then
+                    -- ignore nightmare burst when applying another nightmare elixir or cleansing
+                    abigail.nightmare = false
+                end
                 abigail:RemoveDebuff("elixir_buff")
             end
-        elseif elixir.prefab == "newelixir_cleanse" then
+        elseif cleanse then
             return false, "NO_ELIXIR"
         end
         abigail:AddDebuff("elixir_buff", elixir.prefab .. "_buff")
@@ -130,9 +137,14 @@ end
 elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     buff.entity:SetParent(abigail.entity)
     buff.Transform:SetPosition(0, 0, 0)
-    abigail:SetNightmareForm(buff.potion_tunings.nightmare)
     if buff.potion_tunings.onattachfn ~= nil then
         buff.potion_tunings.onattachfn(buff, abigail)
+    end
+    if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.onattachfn ~= nil then
+        elixirs.all_nightmare_elixirs.onattachfn(buff, abigail)
+    end
+    if elixirs.all_elixirs.onattachfn ~= nil then
+        elixirs.all_elixirs.onattachfn(buff, abigail)
     end
     if buff.potion_tunings.ontickfn ~= nil then
         buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, abigail)
@@ -140,6 +152,7 @@ elixirs.all_elixirs.buffattachfn = function(buff, abigail)
     if buff.potion_tunings.dripfxfn ~= nil and buff.potion_tunings.driptaskfn ~= nil then
         buff.potion_tunings.driptaskfn(buff, abigail)
     end
+    abigail:SetNightmareForm(buff.potion_tunings.nightmare)
     buff:ListenForEvent("death", function()
         buff.components.debuff:Stop()
     end, abigail)
@@ -151,6 +164,12 @@ end
 elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
     if buff.potion_tunings.ondetachfn ~= nil then
         buff.potion_tunings.ondetachfn(buff, abigail)
+    end
+    if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.ondetachfn ~= nil then
+        elixirs.all_nightmare_elixirs.ondetachfn(buff, abigail)
+    end
+    if elixirs.all_elixirs.ondetachfn ~= nil then
+        elixirs.all_elixirs.ondetachfn(buff, abigail)
     end
     abigail:SetNightmareForm(false)
     if buff.task ~= nil then
@@ -225,6 +244,12 @@ elixirs.all_nightmare_elixirs.dripfxfn = function(buff, abigail)
 end
 elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
     buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+end
+elixirs.all_nightmare_elixirs.ondetachfn = function(buff, abigail)
+    -- do huge nightmare burst on death while in nightmare form
+    if abigail.nightmare and (buff.components.timer:GetTimeLeft("decay") or 0) > 0 then
+        elixirs.all_nightmare_elixirs.donightmareburst(buff)
+    end
 end
 elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     -- do small nightmare burst if a nightmare elixir reaches the end of its duration

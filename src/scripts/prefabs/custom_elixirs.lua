@@ -61,8 +61,6 @@ for _, prefab in ipairs(elixirs.new_elixir_prefabs) do
         "dripfxfn",
         "driptaskfn",
         "enddriptaskfn",
-        "onattachfn",
-        "ondetachfn",
         "onextendfn",
         "ontimerdonefn",
         "itemfn",

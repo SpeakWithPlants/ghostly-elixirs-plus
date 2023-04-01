@@ -38,13 +38,6 @@ AddPrefabPostInit("abigail", function(abigail)
         OldBecomeAggressive(self)
         self.AnimState:OverrideSymbol("ghost_eyes", current_build, "angry_ghost_eyes")
     end
-
-    -- huge nightmare burst on death while in nightmare form
-    abigail:ListenForEvent("stopaura", function(self)
-        if self.nightmare then
-            elixirs.all_nightmare_elixirs.donightmareburst(self)
-        end
-    end)
 end)
 
 local function FindNodeAt(root, node_path)
