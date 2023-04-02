@@ -1,5 +1,9 @@
 local elixirs = {}
 
+local function lerp(p, x1, y1, x2, y2)
+    return y1 + (y2 - y1) * math.clamp((p - x1) / (x2 - x1), 0, 1)
+end
+
 --[[
  Usable Functions:
 
@@ -147,7 +151,8 @@ elixirs.all_elixirs.buffattachfn = function(buff, abigail)
         elixirs.all_elixirs.onattachfn(buff, abigail)
     end
     if buff.potion_tunings.ontickfn ~= nil then
-        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, abigail)
+        local tickfn = function() buff.potion_tunings.ontickfn(buff, abigail) end
+        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, tickfn, nil, abigail)
     end
     if buff.potion_tunings.dripfxfn ~= nil and buff.potion_tunings.driptaskfn ~= nil then
         buff.potion_tunings.driptaskfn(buff, abigail)
@@ -333,35 +338,27 @@ elixirs.newelixir_healthdamage =
 }
 elixirs.newelixir_healthdamage.calcmultiplier_wendy_vex = function(wendy)
     if wendy.components.health ~= nil then
-        local health_percent = wendy.components.health:GetPercent()
+        local current_health = wendy.components.health:GetPercent()
         local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
-        if health_percent <= tuning.LOW_HEALTH then
+        if current_health <= tuning.LOW_HEALTH then
             return tuning.WENDY_VEX.BONUS_DAMAGE_MULT
         end
-        local deltaY = tuning.WENDY_VEX.MIN_DAMAGE_MULT - tuning.WENDY_VEX.MAX_DAMAGE_MULT
-        local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
-        if deltaX == 0 then
-            return tuning.WENDY_VEX.MAX_DAMAGE_MULT
-        end
-        local m = deltaY / deltaX
-        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.WENDY_VEX.MIN_DAMAGE_MULT
+        local x1, y1 = tuning.LOW_HEALTH, tuning.WENDY_VEX.MAX_DAMAGE_MULT
+        local x2, y2 = tuning.HIGH_HEALTH, tuning.WENDY_VEX.MIN_DAMAGE_MULT
+        return lerp(current_health, x1, y1, x2, y2)
     end
     return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
 end
 elixirs.newelixir_healthdamage.calcmultiplier_abigail = function(wendy)
     if wendy.components.health ~= nil then
-        local health_percent = wendy.components.health:GetPercent()
+        local current_health = wendy.components.health:GetPercent()
         local tuning = TUNING.NEW_ELIXIRS.HEALTHDAMAGE
-        if health_percent <= tuning.LOW_HEALTH then
+        if current_health <= tuning.LOW_HEALTH then
             return tuning.ABIGAIL.BONUS_DAMAGE_MULT
         end
-        local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
-        local deltaX = tuning.HIGH_HEALTH - tuning.LOW_HEALTH
-        if deltaX == 0 then
-            return tuning.ABIGAIL.MAX_DAMAGE_MULT
-        end
-        local m = deltaY / deltaX
-        return m * (health_percent - tuning.HIGH_HEALTH) + tuning.ABIGAIL.MIN_DAMAGE_MULT
+        local x1, y1 = tuning.LOW_HEALTH, tuning.ABIGAIL.MAX_DAMAGE_MULT
+        local x2, y2 = tuning.HIGH_HEALTH, tuning.ABIGAIL.MIN_DAMAGE_MULT
+        return lerp(current_health, x1, y1, x2, y2)
     end
     return 1
 end
@@ -394,49 +391,36 @@ elixirs.newelixir_insanitydamage.calcmultiplier_wendy_vex = function(_, abigail)
     if abigail._playerlink ~= nil then
         local wendy = abigail._playerlink
         if wendy.components.sanity ~= nil then
-            local sanity_percent = wendy.components.sanity:GetPercent()
+            local current_sanity = wendy.components.sanity:GetPercent()
             local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
-            if sanity_percent <= tuning.LOW_SANITY then
+            if current_sanity <= tuning.LOW_SANITY then
                 return tuning.WENDY_VEX.BONUS_DAMAGE_MULT
             end
-            local deltaY = tuning.WENDY_VEX.MIN_DAMAGE_MULT - tuning.WENDY_VEX.MAX_DAMAGE_MULT
-            local deltaX = tuning.HIGH_SANITY - tuning.LOW_SANITY
-            if deltaX == 0 then
-                return tuning.WENDY_VEX.MAX_DAMAGE_MULT
-            end
-            local m = deltaY / deltaX
-            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.WENDY_VEX.MIN_DAMAGE_MULT
+            local x1, y1 = tuning.LOW_SANITY, tuning.WENDY_VEX.MAX_DAMAGE_MULT
+            local x2, y2 = tuning.HIGH_SANITY, tuning.WENDY_VEX.MIN_DAMAGE_MULT
+            return lerp(current_sanity, x1, y1, x2, y2)
         end
     end
     return TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD
 end
-elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(_, abigail)
-    if abigail._playerlink ~= nil then
-        local wendy = abigail._playerlink
-        if wendy.components.sanity ~= nil then
-            local sanity_percent = wendy.components.sanity:GetPercent()
-            local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
-            if sanity_percent <= tuning.LOW_SANITY then
-                return tuning.ABIGAIL.BONUS_DAMAGE_MULT
-            end
-            local deltaY = tuning.ABIGAIL.MIN_DAMAGE_MULT - tuning.ABIGAIL.MAX_DAMAGE_MULT
-            local deltaX = tuning.HIGH_SANITY - tuning.LOW_SANITY
-            if deltaX == 0 then
-                return tuning.ABIGAIL.MAX_DAMAGE_MULT
-            end
-            local m = deltaY / deltaX
-            return m * (sanity_percent - tuning.HIGH_SANITY) + tuning.ABIGAIL.MIN_DAMAGE_MULT
+elixirs.newelixir_insanitydamage.calcmultiplier_abigail = function(wendy)
+    if wendy.components.sanity ~= nil then
+        local current_sanity = wendy.components.sanity:GetPercent()
+        local tuning = TUNING.NEW_ELIXIRS.INSANITYDAMAGE
+        if current_sanity <= tuning.LOW_SANITY then
+            return tuning.ABIGAIL.BONUS_DAMAGE_MULT
         end
+        local x1, y1 = tuning.LOW_SANITY, tuning.ABIGAIL.MAX_DAMAGE_MULT
+        local x2, y2 = tuning.HIGH_SANITY, tuning.ABIGAIL.MIN_DAMAGE_MULT
+        return lerp(current_sanity, x1, y1, x2, y2)
     end
     return 1
 end
 elixirs.newelixir_insanitydamage.ontickfn = function(buff, abigail)
-    if abigail ~= nil and abigail.components.combat ~= nil then
-        if abigail._playerlink ~= nil then
-            local wendy = abigail._playerlink
-            local multiplier = elixirs.newelixir_insanitydamage.calcmultiplier_abigail(wendy)
-            abigail.components.combat.externaldamagemultipliers:SetModifier(buff, multiplier)
-        end
+    if abigail ~= nil and abigail.components.combat ~= nil and abigail._playerlink ~= nil then
+        local wendy = abigail._playerlink
+        local multiplier = elixirs.newelixir_insanitydamage.calcmultiplier_abigail(wendy)
+        abigail.components.combat.externaldamagemultipliers:SetModifier(buff, multiplier)
     end
 end
 elixirs.newelixir_insanitydamage.ondetachfn = function(buff, abigail)

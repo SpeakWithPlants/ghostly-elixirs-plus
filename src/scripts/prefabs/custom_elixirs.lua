@@ -5,6 +5,10 @@ local all_prefabs = {}
 local general_params = elixirs.all_elixirs
 local nightmare_params = elixirs.all_nightmare_elixirs
 
+local function select(property, params)
+    return params[property] or nil
+end
+
 local function priority_select(property, params)
     if params[property] then
         return params[property]
@@ -61,16 +65,24 @@ for _, prefab in ipairs(elixirs.new_elixir_prefabs) do
         "dripfxfn",
         "driptaskfn",
         "enddriptaskfn",
+        "ontickfn",
         "onextendfn",
         "ontimerdonefn",
         "itemfn",
         "bufffn"
+    }
+    local child_properties = {
+        "onattachfn",
+        "ondetachfn",
     }
     local explicit_params = {}
     for _, property in ipairs(priority_properties) do
         explicit_params[property] = priority_select(property, raw_params)
     end
     explicit_params.nightmare = raw_params.nightmare or false
+    for _, property in ipairs(child_properties) do
+        explicit_params[property] = select(property, raw_params)
+    end
     local prefabs = {
         prefab .. "_buff",
         explicit_params.applyfx,

@@ -46,11 +46,12 @@ local function MakeBurst(name, scale, sanitydrain, range_end, range_start)
         if not TheWorld.ismastersim then return inst end
 
         inst.sanitydrain = sanitydrain or -TUNING.SANITY_LARGE
-        inst.range_end = range_end or 10.0
+        inst.range_end = range_end or 15.0
         inst.range_start = range_start or 5.0
         inst.InsanityBombFn = InsanityBombFn
 
-        inst.SoundEmitter:PlaySound("dontstarve/common/deathpoof")
+        inst.SoundEmitter:PlaySound("dontstarve/sanity/creature2/attack")
+        inst.SoundEmitter:PlaySound("dontstarve/sanity/creature2/attack_grunt")
 
         inst.persists = false
         inst:ListenForEvent("animover", inst.Remove)
@@ -63,5 +64,5 @@ local function MakeBurst(name, scale, sanitydrain, range_end, range_start)
     return Prefab(name, fn, assets)
 end
 
-return  MakeBurst("nightmare_burst", 1.5, -TUNING.SANITY_HUGE),
-        MakeBurst("nightmare_burst_small", 1.0, -TUNING.SANITY_LARGE)
+return  MakeBurst("nightmare_burst", 1.5, -TUNING.SANITY_HUGE * 1.5),
+        MakeBurst("nightmare_burst_small", 1.0, -TUNING.SANITY_HUGE)
