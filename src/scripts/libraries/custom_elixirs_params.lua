@@ -1,6 +1,9 @@
 local elixirs = {}
 
 local function lerp(p, x1, y1, x2, y2)
+    if x1 == x2 then
+        return y1
+    end
     return y1 + (y2 - y1) * math.clamp((p - x1) / (x2 - x1), 0, 1)
 end
 
@@ -455,19 +458,19 @@ elixirs.newelixir_lightning =
     duration = TUNING.NEW_ELIXIRS.LIGHTNING.DURATION,
     applyfx = "ghostlyelixir_attack_fx",
 }
-elixirs.newelixir_lightning.smitefn = function(target)
+elixirs.newelixir_lightning.smitefn = function(abigail)
     if math.random() < TUNING.NEW_ELIXIRS.LIGHTNING.SMITE_CHANCE then
-        local x, y, z = target.Transform:GetWorldPosition()
-        if target.components.aura ~= nil then
+        local x, y, z = abigail.Transform:GetWorldPosition()
+        if abigail.components.aura ~= nil then
             local necessarytags = { "_combat" }
-            local ignoretags = target.components.aura.auraexcludetags or {}
-            local radius = target.components.aura.radius or 4
+            local ignoretags = abigail.components.aura.auraexcludetags or {}
+            local radius = abigail.components.aura.radius or 4
             local entities = TheSim:FindEntities(x, y, z, radius, necessarytags, ignoretags)
             local smitees = {}
             local found = false
-            for i, entity in ipairs(entities) do
-                if target:auratest(entity) and entity.components.health ~= nil and not entity.components.health:IsDead() then
-                    smitees[i] = entity
+            for _, entity in ipairs(entities) do
+                if abigail:auratest(entity) and entity.components.health ~= nil and not entity.components.health:IsDead() then
+                    table.insert(smitees, entity)
                     found = true
                 end
             end
@@ -486,10 +489,10 @@ elixirs.newelixir_lightning.bonusdamagefn = function(abigail, target, damage)
     end
     return damage * 0.5
 end
-elixirs.newelixir_lightning.onareaattackotherfn = function(_, data)
+elixirs.newelixir_lightning.onareaattackotherfn = function(abigail, data)
     local target = data ~= nil and data.target
     if target ~= nil then
-        elixirs.newelixir_lightning.smitefn(target)
+        elixirs.newelixir_lightning.smitefn(abigail)
     end
 end
 elixirs.newelixir_lightning.onattachfn = function(_, abigail)
