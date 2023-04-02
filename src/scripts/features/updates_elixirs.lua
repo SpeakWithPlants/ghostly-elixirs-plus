@@ -19,7 +19,7 @@ AddPrefabPostInit("ghostlyelixir_speed", function(elixir)
             old_apply_fn(self, abigail)
         end
         if elixirs.ghostlyelixir_speed.onattachfn ~= nil then
-            elixirs.ghostlyelixir_speed.onattachfn(abigail)
+            elixirs.ghostlyelixir_speed.onattachfn(self, abigail)
         end
     end
 
@@ -29,10 +29,13 @@ AddPrefabPostInit("ghostlyelixir_speed", function(elixir)
             old_detach_fn(self, abigail)
         end
         if elixirs.ghostlyelixir_speed.ondetachfn ~= nil then
-            elixirs.ghostlyelixir_speed.ondetachfn(abigail)
+            elixirs.ghostlyelixir_speed.ondetachfn(self, abigail)
         end
     end
 end)
+if elixirs.ghostlyelixir_speed.new_speed_mult ~= nil then
+    TUNING.GHOSTLYELIXIR_SPEED_LOCO_MULT = elixirs.ghostlyelixir_speed.new_speed_mult
+end
 
 AddPrefabPostInit("ghostlyelixir_slowregen", function(elixir)
     if not elixir.potion_tunings then

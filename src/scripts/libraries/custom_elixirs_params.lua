@@ -541,7 +541,9 @@ end
 --------------------------------------------------------------------------
 --[[ ghostlyelixir_speed ]]
 --------------------------------------------------------------------------
-elixirs.ghostlyelixir_speed = {}
+elixirs.ghostlyelixir_speed = {
+    new_speed_mult = 1.8
+}
 elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
     abigail.min_dist_override = TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST
     abigail.med_dist_override = TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST

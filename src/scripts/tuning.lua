@@ -74,8 +74,8 @@ TUNING.NEW_ELIXIRS = {
     -- continued tuning options for existing elixirs below
     SPEED = {
         MIN_FOLLOW_DIST = 0.5,
-        MED_FOLLOW_DIST = 0.8,
-        MAX_FOLLOW_DIST = 1.0,
+        MED_FOLLOW_DIST = 0.6,
+        MAX_FOLLOW_DIST = 0.7,
     },
     SLOWREGEN = {
         BOND_TIME_MULT = 3,
