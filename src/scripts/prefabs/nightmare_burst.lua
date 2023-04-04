@@ -64,5 +64,5 @@ local function MakeBurst(name, scale, sanitydrain, range_end, range_start)
     return Prefab(name, fn, assets)
 end
 
-return  MakeBurst("nightmare_burst", 1.5, -TUNING.SANITY_HUGE * 1.5),
-        MakeBurst("nightmare_burst_small", 1.0, -TUNING.SANITY_HUGE)
+return  MakeBurst("nightmare_burst", 1.5, -TUNING.SANITY_HUGE * 2.0),
+        MakeBurst("nightmare_burst_small", 1.0, -TUNING.SANITY_HUGE, 10.0, 2.5)
