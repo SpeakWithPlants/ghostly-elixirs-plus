@@ -74,7 +74,3 @@ AddClassPostConstruct("widgets/statusdisplays", function(inst)
 end)
 
 modimport "scripts/recipes"
-
--- TODO remove debug mode
-GLOBAL.CHEATS_ENABLED = true
-GLOBAL.require('debugkeys')
