@@ -61,8 +61,12 @@ elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
         if current_buff ~= nil then
             local current_nightmare = current_buff.potion_tunings.nightmare
             local new_nightmare = elixir.potion_tunings.nightmare
-            if current_nightmare and not new_nightmare and not cleanse then
-                return false, "WRONG_ELIXIR"
+            if current_nightmare and not new_nightmare then
+                if cleanse then
+                    elixirs.newelixir_cleanse.spawnghostflowers(abigail)
+                else
+                    return false, "WRONG_ELIXIR"
+                end
             end
             if current_buff.prefab ~= elixir.buff_prefab then
                 if new_nightmare or cleanse then
@@ -535,7 +539,6 @@ elixirs.newelixir_cleanse.onattachfn = function(_, abigail)
     if abigail._playerlink ~= nil and abigail._playerlink.components.sanity ~= nil then
         abigail._playerlink.components.sanity:DoDelta(TUNING.NEW_ELIXIRS.CLEANSE.SANITY_GAIN)
     end
-    elixirs.newelixir_cleanse.spawnghostflowers(abigail)
 end
 
 --------------------------------------------------------------------------
