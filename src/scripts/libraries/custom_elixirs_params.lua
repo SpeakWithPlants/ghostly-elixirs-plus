@@ -1,3 +1,5 @@
+require("libraries/brain_utils")
+
 local elixirs = {}
 
 local function lerp(p, x1, y1, x2, y2)
@@ -545,17 +547,27 @@ end
 --[[ ghostlyelixir_speed ]]
 --------------------------------------------------------------------------
 elixirs.ghostlyelixir_speed = {
-    new_speed_mult = 1.8
+    --new_speed_mult = 1.8
 }
 elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
-    abigail.min_dist_override = TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST
-    abigail.med_dist_override = TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST
-    abigail.max_dist_override = TUNING.NEW_ELIXIRS.SPEED.MAX_FOLLOW_DIST
+    -- delay because onattach runs before the brain is initialized
+    abigail:DoTaskInTime(0, function()
+        local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
+        follow_node.min_dist = TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST
+        follow_node.target_dist = TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST
+        follow_node.max_dist = TUNING.NEW_ELIXIRS.SPEED.MAX_FOLLOW_DIST
+        abigail.brain:OnUpdate()
+    end)
 end
 elixirs.ghostlyelixir_speed.ondetachfn = function(_, abigail)
-    abigail.min_dist_override = nil
-    abigail.med_dist_override = nil
-    abigail.max_dist_override = nil
+    -- delay because onattach runs before the brain is initialized
+    abigail:DoTaskInTime(0, function()
+        local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
+        follow_node.min_dist = TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW
+        follow_node.target_dist = TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW
+        follow_node.max_dist = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
+        abigail.brain:OnUpdate()
+    end)
 end
 
 return elixirs
