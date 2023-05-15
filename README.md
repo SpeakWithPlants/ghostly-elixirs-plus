@@ -71,10 +71,10 @@ All nightmare elixirs have the following effects:
 * Pipspooks only spawn from filled Graves.
 * Wendy can bury trinkets in Graves to fill them.
 
-## Moondial Offerings
-* During a full moon, Wendy can offer trinkets to the Moondial.  The following morning, any trinkets entered during the night are converted to Mourning Glories and thrown out of the Moondial.
+## Moon Dial Offerings
+* During a full moon, Wendy can offer trinkets to the Moon Dial.  The following morning, any trinkets entered during the night are converted to Mourning Glories and thrown out of the Moon Dial.
 * The number of Mourning Glories each trinket is worth is equal to half the amount of Gold Nuggets it would be worth if traded to the Pig King.
-* After a total of 3 trinkets are offered to the Moondial, each subsequent trinket is worth exactly 1 Mourning Glory.
+* After a total of 3 trinkets are offered to the Moon Dial, each subsequent trinket is worth exactly 1 Mourning Glory.
 
 ## Other Changes
 * Glommer's Flower can be inserted into the Sisturn to permanently fill a flower slot.
