@@ -75,8 +75,7 @@ end)
 
 modimport "scripts/recipes"
 
--- TODO remove debug code
-GLOBAL.CHEATS_ENABLED = true
-GLOBAL.require('debugkeys')
-TUNING.GHOST_GRAVESTONE_CHANCE = 1.0
-TUNING.UNIQUE_SMALLGHOST_DISTANCE = 0.1
+--GLOBAL.CHEATS_ENABLED = true
+--GLOBAL.require('debugkeys')
+--TUNING.GHOST_GRAVESTONE_CHANCE = 1.0
+--TUNING.UNIQUE_SMALLGHOST_DISTANCE = 0.1
