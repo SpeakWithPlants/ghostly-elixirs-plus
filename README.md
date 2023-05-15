@@ -1,6 +1,8 @@
 # Ghostly Elixirs+
 Improves the potential of Wendy's Ectoherbology with new elixirs, grave mechanics, and offerings!
 
+![Summary](info/info_summary.png)
+
 ## New Ghostly Elixirs
 ### Floral Incense
 * Abigail gains a positive sanity aura of +40/min.
