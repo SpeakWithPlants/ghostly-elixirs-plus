@@ -24,6 +24,7 @@ Improves the potential of Wendy's Ectoherbology with new elixirs, grave mechanic
 All nightmare elixirs have the following effects:
 * Abigail gains a negative sanity aura of -100/min.
 * Removing a nightmare elixir causes a burst of insanity, draining the sanity of all nearby players.  The burst is more severe when the removal is caused by Abigail's death.
+* Wendy's damage against cursed targets is increased by 1.2x while using a Dark Sword and Abigail has a nightmare elixir active.
 
 ### Purifying Balm
 * Safely removes Abigail's active elixir effect.
@@ -76,5 +77,4 @@ All nightmare elixirs have the following effects:
 * After a total of 3 trinkets are offered to the Moondial, each subsequent trinket is worth exactly 1 Mourning Glory.
 
 ## Other Changes
-* Wendy's damage against cursed targets while using a Dark Sword is increased by 1.2x.
 * Glommer's Flower can be inserted into the Sisturn to permanently fill a flower slot.
