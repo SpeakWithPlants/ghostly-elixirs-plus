@@ -40,7 +40,7 @@ All nightmare elixirs have the following effects:
 * Wendy's damage against cursed targets scales from 1.4x to 2.0x as Wendy's health decreases to 20%.
 * While Wendy's sanity drops below 20%, her damage against cursed targets is boosted up to 2.5x.
 * Duration of 0.5 days.
-* Crafted using 1 Stinger, 5 Nightmare Fuel, and 3 Mourning Glories.
+* Crafted using 1 Stinger, 3 Nightmare Fuel, and 3 Mourning Glories.
 * Prototyping requires a Shadow Manipulator.
 
 ### Tenebrous Tincture
@@ -48,7 +48,7 @@ All nightmare elixirs have the following effects:
 * Allows Abigail to attack and be attacked by Shadow Creatures.
 * Wendy's damage against cursed Shadow Creatures increases by 2.0x.
 * Duration of 0.5 days.
-* Crafted using 1 Purple Gem, 5 Nightmare Fuel, and 3 Mourning Glories.
+* Crafted using 1 Purple Gem, 3 Nightmare Fuel, and 3 Mourning Glories.
 * Prototyping requires a Shadow Manipulator.
 
 ### Distilled Wrath
@@ -56,7 +56,7 @@ All nightmare elixirs have the following effects:
 * Electrifies Abigail's attacks, increasing her damage by 1.5x against dry targets, and 2.5x against wet targets.
 * Causes Abigail's attacks to have a 10% chance to strike a nearby target with lightning.  The lightning can still be attracted by lightning rods or players, including Wendy.
 * Duration of 0.5 days.
-* Crafted using 1 Volt Goat Horn, 5 Nightmare Fuel, and 3 Mourning Glories.
+* Crafted using 1 Volt Goat Horn, 3 Nightmare Fuel, and 3 Mourning Glories.
 * Prototyping requires a Shadow Manipulator.
 
 ## Old Elixir Changes
