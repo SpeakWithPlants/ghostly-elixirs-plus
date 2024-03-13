@@ -552,6 +552,9 @@ elixirs.ghostlyelixir_speed = {
 elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
     -- delay because onattach runs before the brain is initialized
     abigail:DoTaskInTime(0, function()
+        if not abigail.brain then
+            return
+        end
         local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
         follow_node:EvaluateDistances()
     end)
@@ -559,6 +562,9 @@ end
 elixirs.ghostlyelixir_speed.ondetachfn = function(_, abigail)
     -- delay because ondetach runs before the brain is initialized
     abigail:DoTaskInTime(0, function()
+        if not abigail.brain then
+            return
+        end
         local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
         follow_node:EvaluateDistances()
     end)
