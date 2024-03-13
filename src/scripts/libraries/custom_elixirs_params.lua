@@ -553,20 +553,14 @@ elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
     -- delay because onattach runs before the brain is initialized
     abigail:DoTaskInTime(0, function()
         local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
-        follow_node.min_dist = TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST
-        follow_node.target_dist = TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST
-        follow_node.max_dist = TUNING.NEW_ELIXIRS.SPEED.MAX_FOLLOW_DIST
-        abigail.brain:OnUpdate()
+        follow_node:EvaluateDistances()
     end)
 end
 elixirs.ghostlyelixir_speed.ondetachfn = function(_, abigail)
-    -- delay because onattach runs before the brain is initialized
+    -- delay because ondetach runs before the brain is initialized
     abigail:DoTaskInTime(0, function()
         local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
-        follow_node.min_dist = TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW
-        follow_node.target_dist = TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW
-        follow_node.max_dist = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
-        abigail.brain:OnUpdate()
+        follow_node:EvaluateDistances()
     end)
 end
 

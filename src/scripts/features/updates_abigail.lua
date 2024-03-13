@@ -1,3 +1,5 @@
+require("../libraries/brain_utils")
+
 local function SetNightmareForm(abigail, enable)
     if enable then
         abigail.AnimState:SetBuild("ghost_abigail_nightmare_build")
@@ -10,6 +12,18 @@ local function SetNightmareForm(abigail, enable)
         abigail.AnimState:ClearOverrideSymbol("ghost_eyes")
     else
         abigail.AnimState:OverrideSymbol("ghost_eyes", abigail.AnimState:GetBuild(), "angry_ghost_eyes")
+    end
+end
+
+local function replace_speed(abigail, old_fn, modded_follow_distance, default_follow_dist)
+    local buff = abigail:GetDebuff("elixir_buff")
+    if buff ~= nil and buff.prefab == "ghostlyelixir_speed_buff" then
+        return modded_follow_distance
+    else
+        if old_fn ~= nil then
+            return old_fn(abigail)
+        end
+        return default_follow_dist
     end
 end
 
@@ -35,5 +49,26 @@ AddPrefabPostInit("abigail", function(abigail)
         local current_build = self.AnimState:GetBuild()
         OldBecomeAggressive(self)
         self.AnimState:OverrideSymbol("ghost_eyes", current_build, "angry_ghost_eyes")
+    end
+end)
+
+AddBrainPostInit("abigailbrain", function(brain)
+    if not GLOBAL.TheWorld.ismastersim then return brain end
+
+    local follow_node = GLOBAL.FindBehaviorNodeAt(brain, { "Parallel", "Priority", "Follow" })
+
+    local old_min_dist_fn = follow_node.min_dist_fn
+    follow_node.min_dist_fn = function(abigail)
+        return replace_speed(abigail, old_min_dist_fn, TUNING.NEW_ELIXIRS.SPEED.MIN_FOLLOW_DIST, TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW)
+    end
+
+    local old_max_dist_fn = follow_node.max_dist_fn
+    follow_node.max_dist_fn = function(abigail)
+        return replace_speed(abigail, old_max_dist_fn, TUNING.NEW_ELIXIRS.SPEED.MAX_FOLLOW_DIST, TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW)
+    end
+
+    local old_target_dist_fn = follow_node.target_dist_fn
+    follow_node.target_dist_fn = function(abigail)
+        return replace_speed(abigail, old_target_dist_fn, TUNING.NEW_ELIXIRS.SPEED.MED_FOLLOW_DIST, TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW)
     end
 end)
