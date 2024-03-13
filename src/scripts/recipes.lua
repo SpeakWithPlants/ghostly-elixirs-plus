@@ -33,7 +33,7 @@ AddCharacterRecipe("newelixir_healthdamage", {
 
 AddCharacterRecipe("newelixir_insanitydamage", {
     Ingredient("stinger", 1),
-    Ingredient("nightmarefuel", 5),
+    Ingredient("nightmarefuel", 3),
     Ingredient("ghostflower", 3)
 }, TECH.MAGIC_THREE, {
     builder_tag = "elixirbrewer",
@@ -43,7 +43,7 @@ AddCharacterRecipe("newelixir_insanitydamage", {
 
 AddCharacterRecipe("newelixir_shadowfighter", {
     Ingredient("purplegem", 1),
-    Ingredient("nightmarefuel", 5),
+    Ingredient("nightmarefuel", 3),
     Ingredient("ghostflower", 3)
 }, TECH.MAGIC_THREE, {
     builder_tag = "elixirbrewer",
@@ -53,7 +53,7 @@ AddCharacterRecipe("newelixir_shadowfighter", {
 
 AddCharacterRecipe("newelixir_lightning", {
     Ingredient("lightninggoathorn", 1),
-    Ingredient("nightmarefuel", 5),
+    Ingredient("nightmarefuel", 3),
     Ingredient("ghostflower", 3)
 }, TECH.MAGIC_THREE, {
     builder_tag = "elixirbrewer",
