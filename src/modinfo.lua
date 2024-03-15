@@ -1,7 +1,7 @@
 name = "Ghostly Elixirs+"
 description = "Improves the potential of Wendy's Ectoherbology with new elixirs, grave mechanics, and offerings!"
 author = "SpeakWithPlants"
-version = "1.1.4"
+version = "1.1.5"
 
 forumthread = ""
 

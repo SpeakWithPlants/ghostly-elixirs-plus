@@ -1,4 +1,23 @@
-require("../libraries/brain_utils")
+function FindBehaviorNodeAt(brain, node_path)
+    local current_node = brain.bt.root
+    local current_index = 1
+    while current_index <= #node_path do
+        local search_name = node_path[current_index]
+        local found = false
+        for _, child in ipairs(current_node.children) do
+            if child.name == search_name then
+                current_node = child
+                found = true
+                break
+            end
+        end
+        if not found then
+            return nil
+        end
+        current_index = current_index + 1
+    end
+    return current_node
+end
 
 local function SetNightmareForm(abigail, enable)
     if enable then
@@ -55,7 +74,7 @@ end)
 AddBrainPostInit("abigailbrain", function(brain)
     if not GLOBAL.TheWorld.ismastersim then return brain end
 
-    local follow_node = GLOBAL.FindBehaviorNodeAt(brain, { "Parallel", "Priority", "Follow" })
+    local follow_node = FindBehaviorNodeAt(brain, { "Parallel", "Priority", "Follow" })
 
     local old_min_dist_fn = follow_node.min_dist_fn
     follow_node.min_dist_fn = function(abigail)
