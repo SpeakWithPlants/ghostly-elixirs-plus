@@ -148,6 +148,7 @@ elixirs.all_elixirs.enddriptaskfn = function(buff, _)
     buff.driptask = nil
 end
 elixirs.all_elixirs.buffattachfn = function(buff, abigail)
+    buff.abigail = abigail
     buff.entity:SetParent(abigail.entity)
     buff.Transform:SetPosition(0, 0, 0)
     if buff.potion_tunings.onattachfn ~= nil then
@@ -291,7 +292,12 @@ elixirs.newelixir_sanityaura.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("sanityaura")
-    buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.SANITYAURA.AURA
+    buff.components.sanityaura.aurafn = function(self, _)
+        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+            return TUNING.NEW_ELIXIRS.SANITYAURA.AURA
+        end
+        return 0
+    end
 
     return buff
 end
