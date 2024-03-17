@@ -274,7 +274,12 @@ elixirs.all_nightmare_elixirs.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("sanityaura")
-    buff.components.sanityaura.aura = TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
+    buff.components.sanityaura.aura = function(self, _)
+        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+            return TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
+        end
+        return 0
+    end
 
     return buff
 end
@@ -337,7 +342,12 @@ elixirs.newelixir_lightaura.postbufffn = function(buff)
     if not TheWorld.ismastersim then return buff end
 
     buff:AddComponent("heater")
-    buff.components.heater.heat = TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
+    buff.components.heater.heatfn = function(self, _)
+        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+            return TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
+        end
+        return 0
+    end
 
     return buff
 end
