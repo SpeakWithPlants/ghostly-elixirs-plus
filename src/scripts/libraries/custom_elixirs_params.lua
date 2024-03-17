@@ -102,7 +102,9 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
     MakeInventoryFloatable(elixir)
 
     elixir.entity:SetPristine()
-    if not TheWorld.ismastersim then return elixir end
+    if not TheWorld.ismastersim then
+        return elixir
+    end
 
     elixir.potion_tunings = params
 
@@ -161,7 +163,9 @@ elixirs.all_elixirs.buffattachfn = function(buff, abigail)
         elixirs.all_elixirs.onattachfn(buff, abigail)
     end
     if buff.potion_tunings.ontickfn ~= nil then
-        local tickfn = function() buff.potion_tunings.ontickfn(buff, abigail) end
+        local tickfn = function()
+            buff.potion_tunings.ontickfn(buff, abigail)
+        end
         buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, tickfn, nil, abigail)
     end
     if buff.potion_tunings.dripfxfn ~= nil and buff.potion_tunings.driptaskfn ~= nil then
@@ -219,7 +223,9 @@ elixirs.all_elixirs.bufftimerdonefn = function(buff, data)
     end
 end
 elixirs.all_elixirs.postbufffn = function(buff)
-    if not TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then
+        return buff
+    end
 
     buff:AddComponent("debuff")
     buff.components.debuff:SetAttachedFn(elixirs.all_elixirs.buffattachfn)
@@ -271,7 +277,9 @@ elixirs.all_nightmare_elixirs.ontimerdonefn = function(buff)
     elixirs.all_nightmare_elixirs.donightmareburst(buff, true)
 end
 elixirs.all_nightmare_elixirs.postbufffn = function(buff)
-    if not TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then
+        return buff
+    end
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aura = function(self, _)
@@ -287,14 +295,15 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_sanityaura ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_sanityaura =
-{
+elixirs.newelixir_sanityaura = {
     duration = TUNING.NEW_ELIXIRS.SANITYAURA.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
 elixirs.newelixir_sanityaura.postbufffn = function(buff)
-    if not TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then
+        return buff
+    end
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aurafn = function(self, _)
@@ -310,8 +319,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_lightaura ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_lightaura =
-{
+elixirs.newelixir_lightaura = {
     duration = TUNING.NEW_ELIXIRS.LIGHTAURA.DURATION,
     applyfx = "ghostlyelixir_attack_fx",
     dripfx = "ghostlyelixir_attack_dripfx",
@@ -332,14 +340,18 @@ elixirs.newelixir_lightaura.bufffn = function(_, params)
     buff.Light:SetColour(255 / 255, 160 / 255, 160 / 255)
 
     buff.entity:SetPristine()
-    if not TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then
+        return buff
+    end
 
     buff.potion_tunings = params
 
     return buff
 end
 elixirs.newelixir_lightaura.postbufffn = function(buff)
-    if not TheWorld.ismastersim then return buff end
+    if not TheWorld.ismastersim then
+        return buff
+    end
 
     buff:AddComponent("heater")
     buff.components.heater.heatfn = function(self, _)
@@ -355,8 +367,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_healthdamage ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_healthdamage =
-{
+elixirs.newelixir_healthdamage = {
     duration = TUNING.NEW_ELIXIRS.HEALTHDAMAGE.DURATION,
     applyfx = "ghostlyelixir_retaliation_fx",
     dripfx = "ghostlyelixir_retaliation_dripfx",
@@ -405,8 +416,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_insanitydamage ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_insanitydamage =
-{
+elixirs.newelixir_insanitydamage = {
     nightmare = true,
     duration = TUNING.NEW_ELIXIRS.INSANITYDAMAGE.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
@@ -457,8 +467,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_shadowfighter ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_shadowfighter =
-{
+elixirs.newelixir_shadowfighter = {
     nightmare = true,
     duration = TUNING.NEW_ELIXIRS.SHADOWFIGHTER.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
@@ -474,8 +483,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_lightning ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_lightning =
-{
+elixirs.newelixir_lightning = {
     nightmare = true,
     duration = TUNING.NEW_ELIXIRS.LIGHTNING.DURATION,
     applyfx = "ghostlyelixir_attack_fx",
@@ -496,7 +504,9 @@ elixirs.newelixir_lightning.smitefn = function(abigail)
                     found = true
                 end
             end
-            if not found then return end
+            if not found then
+                return
+            end
             local smitee = GetRandomItem(smitees)
             if smitee ~= nil then
                 TheWorld:PushEvent("ms_sendlightningstrike", smitee:GetPosition())
@@ -533,8 +543,7 @@ end
 --------------------------------------------------------------------------
 --[[ newelixir_cleanse ]]
 --------------------------------------------------------------------------
-elixirs.newelixir_cleanse =
-{
+elixirs.newelixir_cleanse = {
     duration = TUNING.NEW_ELIXIRS.CLEANSE.DURATION,
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
