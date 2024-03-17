@@ -282,7 +282,7 @@ elixirs.all_nightmare_elixirs.postbufffn = function(buff)
     end
 
     buff:AddComponent("sanityaura")
-    buff.components.sanityaura.aura = function(self, _)
+    buff.components.sanityaura.aurafn = function(self, _)
         if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
             return TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
         end
