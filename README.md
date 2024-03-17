@@ -32,7 +32,7 @@ All nightmare elixirs have the following effects:
 * Safely removes Abigail's active elixir effect.
 * If the active elixir effect is a nightmare elixir, its removal does not cause a burst of insanity and Abigail drops a handful of Mourning Glories.
 * No duration, instantaneous effect.
-* Crafted using 2 Ash, 2 Petals, and 2 Mourning Glories.
+* Crafted using 1 Ash, 1 Petals, and 1 Mourning Glories.
 
 ### Nightmare Serum
 * Nightmare elixir.
@@ -54,7 +54,7 @@ All nightmare elixirs have the following effects:
 ### Distilled Wrath
 * Nightmare elixir.
 * Electrifies Abigail's attacks, increasing her damage by 1.5x against dry targets, and 2.5x against wet targets.
-* Causes Abigail's attacks to have a 10% chance to strike a nearby target with lightning.  The lightning can still be attracted by lightning rods or players, including Wendy.
+* Abigail's attacks have a 10% chance to strike a nearby target with lightning.  The lightning can still be attracted by lightning rods or players, including Wendy.
 * Duration of 0.5 days.
 * Crafted using 1 Volt Goat Horn, 3 Nightmare Fuel, and 3 Mourning Glories.
 * Prototyping requires a Shadow Manipulator.

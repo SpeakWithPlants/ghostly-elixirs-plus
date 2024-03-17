@@ -62,9 +62,9 @@ AddCharacterRecipe("newelixir_lightning", {
 })
 
 AddCharacterRecipe("newelixir_cleanse", {
-    Ingredient("ash", 2),
-    Ingredient("petals", 2),
-    Ingredient("ghostflower", 2)
+    Ingredient("ash", 1),
+    Ingredient("petals", 1),
+    Ingredient("ghostflower", 1)
 }, TECH.NONE, {
     builder_tag = "elixirbrewer",
     atlas = "images/inventoryimages/newelixir_cleanse.xml",
