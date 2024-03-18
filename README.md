@@ -32,7 +32,7 @@ All nightmare elixirs have the following effects:
 * Safely removes Abigail's active elixir effect.
 * If the active elixir effect is a nightmare elixir, its removal does not cause a burst of insanity and Abigail drops a handful of Mourning Glories.
 * No duration, instantaneous effect.
-* Crafted using 1 Ash, 1 Petals, and 1 Mourning Glories.
+* Crafted using 1 Ash, 1 Petals, and 1 Mourning Glory.
 
 ### Nightmare Serum
 * Nightmare elixir.
