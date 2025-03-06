@@ -34,6 +34,7 @@ PrefabFiles = {
 
 modimport "scripts/tuning"
 modimport "scripts/constants"
+modimport "scripts/brain_utils"
 
 -- add tag to all trinket items
 for k = 1, GLOBAL.NUM_TRINKETS do

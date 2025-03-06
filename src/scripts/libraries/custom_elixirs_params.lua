@@ -1,4 +1,4 @@
-require("libraries/brain_utils")
+require("brain_utils")
 
 local elixirs = {}
 
@@ -580,7 +580,7 @@ elixirs.ghostlyelixir_speed.onattachfn = function(_, abigail)
         if not abigail.brain then
             return
         end
-        local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
+        local follow_node = FindAbigailFollowNode(abigail.brain)
         follow_node:EvaluateDistances()
     end)
 end
@@ -590,7 +590,7 @@ elixirs.ghostlyelixir_speed.ondetachfn = function(_, abigail)
         if not abigail.brain then
             return
         end
-        local follow_node = FindBehaviorNodeAt(abigail.brain, { "Parallel", "Priority", "Follow" })
+        local follow_node = FindAbigailFollowNode(abigail.brain)
         follow_node:EvaluateDistances()
     end)
 end
