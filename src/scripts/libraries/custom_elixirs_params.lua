@@ -12,15 +12,18 @@ end
 --[[
  Usable Functions:
 
- itemfn(prefab, params)                                         - creates the elixir item that wendy uses
- postitemfn(elixir)                                             - executed after the elixir entity has been created
- bufffn(prefab, params)                                         - creates the invisible buff object attached to abigail
- postbufffn(buff)                                               - executed after the buff entity has been created
- onattachfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is added to abigail
- ontickfn(buff, target)                                         - executed at the buff's tick rate until detached
- ondetachfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is removed from abigail
- onextendfn(buff, target, followsymbol, followoffset, data)     - executed when the buff is reapplied to abigail
- ontimerdonefn(buff, data { timername })                        - executed immediately before the buff is removed from abigail due to expiration
+ itemfn(prefab, params)                                             - creates the elixir item that wendy uses
+ postitemfn(elixir)                                                 - executed after the elixir entity has been created
+ bufffn(prefab, params)                                             - creates the invisible buff object attached to abigail
+ postbufffn(buff)                                                   - executed after the buff entity has been created
+ onattachfn(buff, target, followsymbol, followoffset, data)         - executed when the buff is added to abigail
+ onattachplayerfn(buff, target, followsymbol, followoffset, data)   - executed when the buff is added to a player
+ ontickfn(buff, target)                                             - executed at the buff's tick rate on abigail until detached
+ ontickplayerfn(buff, target)                                       - executed at the buff's tick rate on a player until detached
+ ondetachfn(buff, target, followsymbol, followoffset, data)         - executed when the buff is removed from abigail
+ ondetachplayerfn(buff, target, followsymbol, followoffset, data)   - executed when the buff is removed from a player
+ onextendfn(buff, target, followsymbol, followoffset, data)         - executed when the buff is reapplied to abigail
+ ontimerdonefn(buff, data { timername })                            - executed immediately before the buff is removed from abigail due to expiration
 ]]--
 
 --------------------------------------------------------------------------
@@ -56,16 +59,16 @@ elixirs.all_elixirs = {
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
-elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
-    if abigail ~= nil then
-        local current_buff = abigail:GetDebuff("elixir_buff")
+elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, target)
+    if target ~= nil then
+        local current_buff = target:GetDebuff("elixir_buff")
         local cleanse = (elixir.prefab == "newelixir_cleanse")
         if current_buff ~= nil then
             local current_nightmare = current_buff.potion_tunings.nightmare
             local new_nightmare = elixir.potion_tunings.nightmare
             if current_nightmare and not new_nightmare then
                 if cleanse then
-                    elixirs.newelixir_cleanse.spawnghostflowers(abigail)
+                    elixirs.newelixir_cleanse.spawnghostflowers(target)
                 else
                     return false, "WRONG_ELIXIR"
                 end
@@ -73,14 +76,14 @@ elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, abigail)
             if current_buff.prefab ~= elixir.buff_prefab then
                 if new_nightmare or cleanse then
                     -- ignore nightmare burst when applying another nightmare elixir or cleansing
-                    abigail.nightmare = false
+                    target.nightmare = false
                 end
-                abigail:RemoveDebuff("elixir_buff")
+                target:RemoveDebuff("elixir_buff")
             end
         elseif cleanse then
             return false, "NO_ELIXIR"
         end
-        abigail:AddDebuff("elixir_buff", elixir.prefab .. "_buff")
+        target:AddDebuff("elixir_buff", elixir.prefab .. "_buff")
         return true
     end
 end
@@ -96,6 +99,8 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
     elixir.AnimState:SetBank("new_elixirs")
     elixir.AnimState:SetBuild("new_elixirs")
     elixir.AnimState:PlayAnimation(string.gsub(prefab, "newelixir_", "", 1))
+
+    elixir.elixir_buff_type = "regeneration"
 
     elixir:AddTag("ghostlyelixir")
 
@@ -136,82 +141,112 @@ elixirs.all_elixirs.bufffn = function(_, params)
 
     return buff
 end
-elixirs.all_elixirs.dripfxfn = function(buff, abigail)
-    if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
-        local x, y, z = abigail.Transform:GetWorldPosition()
+elixirs.all_elixirs.dripfxfn = function(buff, target)
+    if not target.inlimbo and not target.sg:HasStateTag("busy") then
+        local x, y, z = target.Transform:GetWorldPosition()
         SpawnPrefab(buff.potion_tunings.dripfx).Transform:SetPosition(x, y, z)
     end
 end
-elixirs.all_elixirs.driptaskfn = function(buff, abigail)
-    buff.driptask = buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+elixirs.all_elixirs.driptaskfn = function(buff, target)
+    buff.driptask = buff:DoPeriodicTask(TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, target)
 end
 elixirs.all_elixirs.enddriptaskfn = function(buff, _)
     buff.driptask:Cancel()
     buff.driptask = nil
 end
-elixirs.all_elixirs.buffattachfn = function(buff, abigail)
-    buff.abigail = abigail
-    buff.entity:SetParent(abigail.entity)
+elixirs.all_elixirs.buffattachfn = function(buff, target)
+    buff.target = target
+    buff.entity:SetParent(target.entity)
     buff.Transform:SetPosition(0, 0, 0)
-    if buff.potion_tunings.onattachfn ~= nil then
-        buff.potion_tunings.onattachfn(buff, abigail)
-    end
-    if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.onattachfn ~= nil then
-        elixirs.all_nightmare_elixirs.onattachfn(buff, abigail)
-    end
-    if elixirs.all_elixirs.onattachfn ~= nil then
-        elixirs.all_elixirs.onattachfn(buff, abigail)
-    end
-    if buff.potion_tunings.ontickfn ~= nil then
-        local tickfn = function()
-            buff.potion_tunings.ontickfn(buff, abigail)
+    if target:HasTag("player") then
+        if buff.potion_tunings.onattachplayerfn ~= nil then
+            buff.potion_tunings.onattachplayerfn(buff, target)
         end
-        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, tickfn, nil, abigail)
+        if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.onattachplayerfn ~= nil then
+            elixirs.all_nightmare_elixirs.onattachplayerfn(buff, target)
+        end
+        if elixirs.all_elixirs.onattachplayerfn ~= nil then
+            elixirs.all_elixirs.onattachplayerfn(buff, target)
+        end
+        if buff.potion_tunings.ontickplayerfn ~= nil then
+            local tickfn = function()
+                buff.potion_tunings.ontickplayerfn(buff, target)
+            end
+            buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, tickfn, nil, target)
+        end
+    else
+        if buff.potion_tunings.onattachfn ~= nil then
+            buff.potion_tunings.onattachfn(buff, target)
+        end
+        if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.onattachfn ~= nil then
+            elixirs.all_nightmare_elixirs.onattachfn(buff, target)
+        end
+        if elixirs.all_elixirs.onattachfn ~= nil then
+            elixirs.all_elixirs.onattachfn(buff, target)
+        end
+        if buff.potion_tunings.ontickfn ~= nil then
+            local tickfn = function()
+                buff.potion_tunings.ontickfn(buff, target)
+            end
+            buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, tickfn, nil, target)
+        end
+        target:SetNightmareForm(buff.potion_tunings.nightmare)
     end
     if buff.potion_tunings.dripfxfn ~= nil and buff.potion_tunings.driptaskfn ~= nil then
-        buff.potion_tunings.driptaskfn(buff, abigail)
+        buff.potion_tunings.driptaskfn(buff, target)
     end
-    abigail:SetNightmareForm(buff.potion_tunings.nightmare)
     buff:ListenForEvent("death", function()
         buff.components.debuff:Stop()
-    end, abigail)
-    if buff.potion_tunings.applyfx ~= nil and not abigail.inlimbo then
+    end, target)
+    if buff.potion_tunings.applyfx ~= nil and not target.inlimbo then
         local applyfx = SpawnPrefab(buff.potion_tunings.applyfx)
-        applyfx.entity:SetParent(abigail.entity)
+        applyfx.entity:SetParent(target.entity)
     end
 end
-elixirs.all_elixirs.buffdetachfn = function(buff, abigail)
-    if buff.potion_tunings.ondetachfn ~= nil then
-        buff.potion_tunings.ondetachfn(buff, abigail)
+elixirs.all_elixirs.buffdetachfn = function(buff, target)
+    if target:HasTag("player") then
+        if buff.potion_tunings.ondetachplayerfn ~= nil then
+            buff.potion_tunings.ondetachplayerfn(buff, target)
+        end
+        if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.ondetachplayerfn ~= nil then
+            elixirs.all_nightmare_elixirs.ondetachplayerfn(buff, target)
+        end
+        if elixirs.all_elixirs.ondetachplayerfn ~= nil then
+            elixirs.all_elixirs.ondetachplayerfn(buff, target)
+        end
+    else
+        if buff.potion_tunings.ondetachfn ~= nil then
+            buff.potion_tunings.ondetachfn(buff, target)
+        end
+        if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.ondetachfn ~= nil then
+            elixirs.all_nightmare_elixirs.ondetachfn(buff, target)
+        end
+        if elixirs.all_elixirs.ondetachfn ~= nil then
+            elixirs.all_elixirs.ondetachfn(buff, target)
+        end
+        target:SetNightmareForm(false)
     end
-    if buff.potion_tunings.nightmare and elixirs.all_nightmare_elixirs.ondetachfn ~= nil then
-        elixirs.all_nightmare_elixirs.ondetachfn(buff, abigail)
-    end
-    if elixirs.all_elixirs.ondetachfn ~= nil then
-        elixirs.all_elixirs.ondetachfn(buff, abigail)
-    end
-    abigail:SetNightmareForm(false)
     if buff.task ~= nil then
         buff.task:Cancel()
         buff.task = nil
     end
     if buff.enddriptaskfn ~= nil then
-        buff.potion_tunings.enddriptaskfn(buff, abigail)
+        buff.potion_tunings.enddriptaskfn(buff, target)
     end
     buff:Remove()
 end
-elixirs.all_elixirs.buffextendfn = function(buff, abigail)
+elixirs.all_elixirs.buffextendfn = function(buff, target)
     if (buff.components.timer:GetTimeLeft("decay") or 0) < buff.potion_tunings.duration then
         buff.components.timer:StopTimer("decay")
         buff.components.timer:StartTimer("decay", buff.potion_tunings.duration)
     end
     if buff.task ~= nil then
         buff.task:Cancel()
-        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, abigail)
+        buff.task = buff:DoPeriodicTask(buff.potion_tunings.tickrate, buff.potion_tunings.ontickfn, nil, target)
     end
-    if buff.potion_tunings.applyfx ~= nil and not abigail.inlimbo then
+    if buff.potion_tunings.applyfx ~= nil and not target.inlimbo then
         local applyfx = SpawnPrefab(buff.potion_tunings.applyfx)
-        applyfx.entity:SetParent(abigail.entity)
+        applyfx.entity:SetParent(target.entity)
     end
 end
 elixirs.all_elixirs.bufftimerdonefn = function(buff, data)
@@ -255,20 +290,20 @@ elixirs.all_nightmare_elixirs.donightmareburst = function(source, small)
     end
     nightmare_burst.Transform:SetPosition(x, y, z)
 end
-elixirs.all_nightmare_elixirs.dripfxfn = function(buff, abigail)
-    if not abigail.inlimbo and not abigail.sg:HasStateTag("busy") then
-        local ax, ay, az = abigail.Transform:GetWorldPosition()
+elixirs.all_nightmare_elixirs.dripfxfn = function(buff, target)
+    if not target.inlimbo and not target.sg:HasStateTag("busy") then
+        local ax, ay, az = target.Transform:GetWorldPosition()
         local angle = math.random(0, PI2)
         local dripfx = SpawnPrefab(buff.potion_tunings.dripfx)
         dripfx.Transform:SetPosition(ax + 0.5 * math.cos(angle), ay, az - 0.5 * math.sin(angle))
     end
 end
-elixirs.all_nightmare_elixirs.driptaskfn = function(buff, abigail)
-    buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, abigail)
+elixirs.all_nightmare_elixirs.driptaskfn = function(buff, target)
+    buff.driptask = buff:DoPeriodicTask(TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.DRIP_FX_PERIOD, buff.potion_tunings.dripfxfn, TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY * 0.25, target)
 end
-elixirs.all_nightmare_elixirs.ondetachfn = function(buff, abigail)
+elixirs.all_nightmare_elixirs.ondetachfn = function(buff, target)
     -- do huge nightmare burst on death while in nightmare form
-    if abigail.nightmare and (buff.components.timer:GetTimeLeft("decay") or 0) > 0 then
+    if target.nightmare and (buff.components.timer:GetTimeLeft("decay") or 0) > 0 then
         elixirs.all_nightmare_elixirs.donightmareburst(buff)
     end
 end
@@ -283,7 +318,7 @@ elixirs.all_nightmare_elixirs.postbufffn = function(buff)
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aurafn = function(self, _)
-        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+        if self.target and self.target.components.aura and self.target.components.aura.active then
             return TUNING.NEW_ELIXIRS.ALL_NIGHTMARE_ELIXIRS.SANITYAURA
         end
         return 0
@@ -307,7 +342,7 @@ elixirs.newelixir_sanityaura.postbufffn = function(buff)
 
     buff:AddComponent("sanityaura")
     buff.components.sanityaura.aurafn = function(self, _)
-        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+        if self.target and self.target.components.aura and self.target.components.aura.active then
             return TUNING.NEW_ELIXIRS.SANITYAURA.AURA
         end
         return 0
@@ -355,7 +390,7 @@ elixirs.newelixir_lightaura.postbufffn = function(buff)
 
     buff:AddComponent("heater")
     buff.components.heater.heatfn = function(self, _)
-        if self.abigail and self.abigail.components.aura and self.abigail.components.aura.active then
+        if self.target and self.target.components.aura and self.target.components.aura.active then
             return TUNING.NEW_ELIXIRS.LIGHTAURA.TEMPERATURE
         end
         return 0
