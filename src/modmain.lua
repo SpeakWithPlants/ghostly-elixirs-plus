@@ -1,15 +1,12 @@
 Assets = {
 	-- prefab anim files
 	Asset("ANIM", "anim/new_elixirs.zip"),
-	Asset("ANIM", "anim/gravestones.zip"),
 
 	-- alternate builds
 	Asset("ANIM", "anim/ghost_abigail_nightmare_build.zip"),
 	Asset("ANIM", "anim/status_newelixir.zip"),
 
 	-- inventory images
-	Asset("IMAGE", "images/inventoryimages/gravestone.tex"),
-	Asset("ATLAS", "images/inventoryimages/gravestone.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_sanityaura.tex"),
 	Asset("ATLAS", "images/inventoryimages/newelixir_sanityaura.xml"),
 	Asset("IMAGE", "images/inventoryimages/newelixir_lightaura.tex"),
@@ -28,7 +25,6 @@ Assets = {
 
 PrefabFiles = {
 	"custom_elixirs",
-	"gravestone_placer",
 	"nightmare_burst",
 }
 
@@ -44,7 +40,6 @@ for k = 1, GLOBAL.NUM_TRINKETS do
 end
 
 modimport "scripts/features/moon_dial_offerings"
-modimport "scripts/features/reusable_graves"
 modimport "scripts/features/updates_sisturn"
 modimport "scripts/features/updates_abigail"
 modimport "scripts/features/updates_elixirs"

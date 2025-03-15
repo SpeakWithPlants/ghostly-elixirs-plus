@@ -1,5 +1,4 @@
 local Ingredient = GLOBAL.Ingredient
-local Recipes = GLOBAL.AllRecipes
 local TECH = GLOBAL.TECH
 
 -- add recipes for new elixirs
@@ -71,17 +70,3 @@ AddCharacterRecipe("newelixir_cleanse", {
     image = "newelixir_cleanse.tex",
 })
 
--- make sure you manually update the loot drops for destroyed gravestones (features/reusable_graves.lua)
-AddCharacterRecipe("gravestone", {
-    Ingredient("rocks", 8),
-    Ingredient("boneshard", 1),
-    Ingredient("shovel", 1)
-}, TECH.NONE, {
-    placer = "gravestone_placer",
-    builder_tag = "ghostlyfriend",
-    atlas = "images/inventoryimages/gravestone.xml",
-    image = "gravestone.tex",
-})
-
--- recipe sorting
-Recipes.gravestone.sortkey = Recipes.sisturn.sortkey + 0.1
