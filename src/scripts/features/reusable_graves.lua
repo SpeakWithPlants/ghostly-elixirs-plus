@@ -114,7 +114,9 @@ AddPrefabPostInit("gravestone", function(gravestone)
 
     gravestone:AddTag("structure")
 
-    if not GLOBAL.TheWorld.ismastersim then return gravestone end
+    if not GLOBAL.TheWorld.ismastersim then
+        return gravestone
+    end
 
     gravestone.RemoveGhost = RemoveGhost
 
@@ -147,7 +149,9 @@ end)
 AddPrefabPostInit("mound", function(mound)
     mound.entity:AddSoundEmitter()
 
-    if not GLOBAL.TheWorld.ismastersim then return mound end
+    if not GLOBAL.TheWorld.ismastersim then
+        return mound
+    end
 
     mound.DropBuriedTrinket = DropBuriedTrinket
     mound.BuryTrinket = BuryTrinket
