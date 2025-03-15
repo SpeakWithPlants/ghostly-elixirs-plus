@@ -39,6 +39,9 @@ for k = 1, GLOBAL.NUM_TRINKETS do
 	end)
 end
 
+-- force change APPLYELIXIR action here, seems like Klei forgot to return the success/failure from the Apply() function
+modimport "scripts/features/fix_actions"
+
 modimport "scripts/features/moon_dial_offerings"
 modimport "scripts/features/updates_sisturn"
 modimport "scripts/features/updates_abigail"
@@ -47,13 +50,13 @@ modimport "scripts/features/updates_wendy"
 
 -- allow items to be offered to the moon dial
 -- allow trinkets to be buried in open mounds
-AddComponentAction("USEITEM", "inventoryitem", function(inst, doer, target, actions, _)
+AddComponentAction("USEITEM", "inventoryitem", function(_, doer, target, actions, _)
 	if doer:HasTag("elixirbrewer") and target.prefab == "moondial" then
 		table.insert(actions, GLOBAL.ACTIONS.MOONOFFERING)
 	end
-	if inst:HasTag("trinket") and target.prefab == "mound" and target.AnimState:IsCurrentAnimation("dug") then
-		table.insert(actions, GLOBAL.ACTIONS.BURY)
-	end
+	--if inst:HasTag("trinket") and target.prefab == "mound" and target.AnimState:IsCurrentAnimation("dug") then
+	--	table.insert(actions, GLOBAL.ACTIONS.BURY)
+	--end
 end)
 
 -- these numbers are copied from debug logs, not sure how to get net_hash vars outside the class without using literals

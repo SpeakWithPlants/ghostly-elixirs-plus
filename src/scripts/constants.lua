@@ -19,10 +19,12 @@ for _, ELIXIR in ipairs(NEW_ELIXIRS) do
 end
 
 -- Item names, recipe descriptions, and Wendy inspect dialogue
-CHARACTERS.WENDY.ACTIONFAIL.GIVE = {
-    WRONG_ELIXIR = "I can't apply it without cleansing her!",
-    NO_ELIXIR = "It won't stick!",
-}
+CHARACTERS.WENDY.ACTIONFAIL.GIVE.WRONG_ELIXIR = "I can't apply it without cleansing her!"
+CHARACTERS.WENDY.ACTIONFAIL.GIVE.NO_ELIXIR = "Sigh. What's the point?"
+
+CHARACTERS.WENDY.ACTIONFAIL.APPLYELIXIR.WRONG_ELIXIR = CHARACTERS.WENDY.ACTIONFAIL.GIVE.WRONG_ELIXIR
+CHARACTERS.WENDY.ACTIONFAIL.APPLYELIXIR.NO_ELIXIR = CHARACTERS.WENDY.ACTIONFAIL.GIVE.NO_ELIXIR
+
 CHARACTERS.WENDY.ACTIONFAIL.MOONOFFERING = {
     NO_FULLMOON = "I will have to wait for a full moon.",
     NO_NIGHT = "I will have to wait for night.",
@@ -36,12 +38,10 @@ CHARACTERS.WENDY.DESCRIBE.MOONDIAL = {
     RITUAL_COMPLETE = "Abigail? Abigail!",
 }
 
-STRINGS.RECIPE_DESC.GRAVESTONE = "Revenant relocation."
-
-CHARACTERS.WENDY.DESCRIBE.MOUND = {
-    GENERIC = "Now we can help.",
-    DUG = "All it needs is an offering.",
-}
+--CHARACTERS.WENDY.DESCRIBE.MOUND = {
+--    GENERIC = "Now we can help.",
+--    DUG = "All it needs is an offering.",
+--}
 
 STRINGS.NAMES.NEWELIXIR_SANITYAURA = "Floral Incense"
 STRINGS.RECIPE_DESC.NEWELIXIR_SANITYAURA = "Spirit-scents."
@@ -71,6 +71,6 @@ STRINGS.NAMES.NEWELIXIR_LIGHTNING = "Distilled Wrath"
 STRINGS.RECIPE_DESC.NEWELIXIR_LIGHTNING = "Smite with the fury of the dead."
 CHARACTERS.WENDY.DESCRIBE.NEWELIXIR_LIGHTNING = "It tingles."
 
---STRINGS.NAMES.NEWELIXIR_ = "item_name"
---STRINGS.RECIPE_DESC.NEWELIXIR_ = "recipe_description"
---CHARACTERS.WENDY.DESCRIBE.NEWELIXIR_ = "inspect_dialogue"
+--STRINGS.NAMES.PREFAB = "item_name"
+--STRINGS.RECIPE_DESC.PREFAB = "recipe_description"
+--CHARACTERS.WENDY.DESCRIBE.PREFAB = "inspect_dialogue"

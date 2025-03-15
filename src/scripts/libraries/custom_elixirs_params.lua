@@ -59,32 +59,53 @@ elixirs.all_elixirs = {
     applyfx = "ghostlyelixir_slowregen_fx",
     dripfx = "ghostlyelixir_slowregen_dripfx",
 }
-elixirs.all_elixirs.doapplyelixirfn = function(elixir, _, target)
-    if target ~= nil then
-        local current_buff = target:GetDebuff("elixir_buff")
-        local cleanse = (elixir.prefab == "newelixir_cleanse")
-        if current_buff ~= nil then
-            local current_nightmare = current_buff.potion_tunings.nightmare
-            local new_nightmare = elixir.potion_tunings.nightmare
-            if current_nightmare and not new_nightmare then
-                if cleanse then
-                    elixirs.newelixir_cleanse.spawnghostflowers(target)
-                else
-                    return false, "WRONG_ELIXIR"
-                end
+
+elixirs.all_elixirs.doapplyelixirfn = function(elixir, giver, target)
+    local buff_type = "elixir_buff"
+
+    if elixir.potion_tunings.super_elixir then
+        buff_type = "super_elixir_buff"
+    end
+
+    if target:HasTag("player") and string.find(elixir.prefab, "newelixir_") then
+        return false, "TOO_SUPER"
+    end
+    local current_buff = target:GetDebuff("elixir_buff")
+    local cleanse = (elixir.prefab == "newelixir_cleanse")
+    if current_buff ~= nil then
+        local current_nightmare = current_buff.potion_tunings.nightmare
+        local new_nightmare = elixir.potion_tunings.nightmare
+        if current_nightmare and not new_nightmare then
+            if cleanse then
+                elixirs.newelixir_cleanse.spawnghostflowers(target)
+            else
+                return false, "WRONG_ELIXIR"
             end
-            if current_buff.prefab ~= elixir.buff_prefab then
-                if new_nightmare or cleanse then
-                    -- ignore nightmare burst when applying another nightmare elixir or cleansing
-                    target.nightmare = false
-                end
-                target:RemoveDebuff("elixir_buff")
-            end
-        elseif cleanse then
-            return false, "NO_ELIXIR"
         end
-        target:AddDebuff("elixir_buff", elixir.prefab .. "_buff")
-        return true
+        if current_buff.prefab ~= elixir.buff_prefab then
+            if new_nightmare or cleanse then
+                -- ignore nightmare burst when applying another nightmare elixir or cleansing
+                target.nightmare = false
+            end
+            target:RemoveDebuff("elixir_buff")
+        end
+    elseif cleanse then
+        return false, "NO_ELIXIR"
+    end
+
+    local buff = target:AddDebuff(buff_type, elixir.buff_prefab, nil, nil, function()
+        local cur_buff = target:GetDebuff(buff_type)
+        if cur_buff ~= nil and cur_buff.prefab ~= elixir.buff_prefab then
+            target:RemoveDebuff(buff_type)
+        end
+    end)
+
+    if buff then
+        local new_buff = target:GetDebuff(buff_type)
+        if new_buff.buff_skill_modifier_fn ~= nil then
+            new_buff:buff_skill_modifier_fn(giver, target)
+        end
+        return buff
     end
 end
 elixirs.all_elixirs.itemfn = function(prefab, params)
@@ -100,7 +121,7 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
     elixir.AnimState:SetBuild("new_elixirs")
     elixir.AnimState:PlayAnimation(string.gsub(prefab, "newelixir_", "", 1))
 
-    elixir.elixir_buff_type = "regeneration"
+    elixir.elixir_buff_type = "regeneration" -- this is just a placeholder until the mod has proper swaps for each new elixir
 
     elixir:AddTag("ghostlyelixir")
 
@@ -111,6 +132,7 @@ elixirs.all_elixirs.itemfn = function(prefab, params)
         return elixir
     end
 
+    elixir.buff_prefab = prefab .. "_buff"
     elixir.potion_tunings = params
 
     elixir:AddComponent("inspectable")

@@ -8,7 +8,7 @@ for _, elixir in ipairs(elixirs.all_elixir_prefabs) do
     end)
 end
 
--- update (improve) old elixir buffs
+-- update old elixir buffs
 AddPrefabPostInit("ghostlyelixir_speed", function(elixir)
     if not elixir.potion_tunings then
         return
